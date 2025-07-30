@@ -31,11 +31,10 @@ Sensing is the most important discovery in information theory since Shannon-Nyqu
 sampling theorem.
 
 To learn such a powerful theory is not easy. We need to start from the signal
-transformation, and then some basic concepts like sparse representation and norm. After
-that we will introduce the reconstruction algorithms, which is the most important part
-of Compressed Sensing. In this tutorial we will mainly introduce greedy algorithms and
-iterative thresholding algorithms. The final part is the concept of Compressed Sensing
-and its applications.
+transformation, and then some basic concepts like sparse representation and norm. The
+final part is Compressed Sensing theory, we will introduce its concept and some
+more like the observation matrices and the reconstruction algorithms. In this tutorial
+we will mainly introduce greedy algorithms.
 
 If you find any mistakes or have any suggestions, please feel free to contact me or
 create an issue or a PR.
