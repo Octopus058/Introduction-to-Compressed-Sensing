@@ -1,2 +1,8 @@
-# Introduction-to-Compressed-Sensing
-Compressed Sensing tutorial
+<center>
+
+Introduction-to-Compressed-Sensing
+
+</center>
+
+
+This repository stores Compressed Sensing tutorial.
