@@ -126,10 +126,10 @@
     \vspace*{96pt}
     \fontsize{26}{31.2}\selectfont{Introdution to Compressed Sensing}\par % 主标题
     \vspace{39pt}
-    \fontsize{22}{26.4}\selectfont{\haettenfont v1 .0\normalfont}\par % 版本
+    \fontsize{22}{26.4}\selectfont{\haettenfont v1 .1\normalfont}\par % 版本
     \vspace{52.8pt}
     \fontsize{18}{21.6}\selectfont{Author: \customfont{Lancet Ross}}\par % 作者
-    \fontsize{18}{21.6}\selectfont{Last Edited on: Jul 30th, 2025}\par % 最后编辑时间
+    \fontsize{18}{21.6}\selectfont{Last Edited on: Sept 8th, 2025}\par % 最后编辑时间
     \vfill
 \end{titlepage}
 
@@ -204,7 +204,7 @@ Let's rock and roll!
 \begin{center}
     \vspace*{96pt}
     \fontsize{60}{60}\customfont{1}\par
-    \fontsize{26}{31.2}\section{\textbf{Signal transformation}}\par % 标题
+    \fontsize{26}{31.2}\section{\textbf{Signal Transformation}}\par % 标题
     \vspace{25pt}
     \fontsize{18}{21.6}\customfont{\textit{What we know is not much. What we do not know is
     immense. --- P. S. Laplace}}\par % 名言
@@ -218,7 +218,7 @@ Let's rock and roll!
 We have learned CTFT, CTFS, LT, DTFT and ZT in Signals and Systems. In this section
 we will introduce the Discrete Fourier Transform (DFT).
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 The Discrete Fourier Transform (DFT) is created on the basis of the Discrete
 Fourier Series (DFS). If we call a periodic signal $x_p(t)$, then we should notice
@@ -362,7 +362,7 @@ xlim([0 250])
 
 \subsection{\textbf{Non Uniform Fourier Transform}}
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 FFT is fast, but also limited. The fact puts us into a dilemma: DFT requires that the
 sampling points are uniformly distributed, but in real world the sampling points are not
@@ -513,7 +513,7 @@ Do you think such a question: Nature doesn't have many complex signals, most of 
 are real. So why we use FT and create a complex basis function $e^{-j\omega t}$? Why not
 just use cosine? Well this is what \textbf{Discrete Cosine Transform (DCT)} do.
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 DCT is a twice long DFT which for real even functions. Assume we have a right-side signal
 $x(m)$, which is blue in the figure below. and we fold it back to the left side, which Is
@@ -606,7 +606,7 @@ second and the next second, do FT on both parts, and then we can get the time in
 This is called split by window in STFT. So there is a new concept called
 \textbf{window function}.
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 STFT uses a window function to divide the signal into some parts, and then do FT on
 each part. The core of STFT is to change the basis function to $e^{-j\omega t}y_{window}(t)$.
@@ -768,7 +768,7 @@ This is the \textbf{wavelet mother function}.
   \caption{Wavelet mother function}
 \end{figure}
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 Wavelet mother function is not a single function, but a family of functions. There are
 4 conditions for a wavelet mother function:
@@ -840,7 +840,7 @@ CWT solves the problem of STFT. However, CWT can only process continuous signals
 Like CTFT changes to DFT, CWT also has a discrete version, which is called DWT.
 This is according to computer's discreteness and finiteness.
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 Mallat created a new algorithm to process DWT, which is called \textbf{Mallat Algorithm}.
 The core of Mallat Algorithm is to use a pair of low-pass filter and high-pass filter
@@ -977,6 +977,150 @@ Approximation factor is the low frequency coefficient and detail factor is the h
 coefficient. Only D3 and D4 need to be retained, as the frequency components of the signal
 are 50Hz and 100Hz. The error is extremely small, which shows the good performance of DWT.
 
+\subsection{\textbf{Continuous Curvelet Transform$^{[7]}$}}
+\subsubsection{\textbf{Introduction}}
+
+Similar to the Wavelet Transform, the Curvelet Transform is designed to represent data
+with edges more effectively. It captures the directional information of curves in images,
+making it particularly useful for image processing tasks.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{assets/1.7 Continuous Curvelet Transform/WT and CT.png}
+  \caption{WT (left) and CT (right) $^{[8]}$}
+\end{figure}
+
+Curvelet means small curves. when Curvelet Transform was invented, its aim was to replace
+ridgelets, which are newer than wavelets. Ridgelets are good at representing straight edges,
+while curvelets excel at capturing curved edges. This makes curvelets particularly effective
+for tasks involving images with complex structures and shapes.
+
+The first generation of curvelets was constructed on the basis of the ridgelet transform.
+However, too complex to implement so the second generation came out. Nowadays all we uses
+is the second generation.
+
+\subsubsection{\textbf{Definition}}
+
+Suppose in $R^2$, $x$ is the position parameter, $\omega$ is the frequency parameter,
+$r, \theta$ are the polar coordinates. And there is $W(r), V(t)$ obeys:
+\begin{align*}
+  \sum_{j=-\infty}^{\infty} |W(2^{j}r)|^2 &= 1, \quad r \in (\frac34, \frac32) \\
+  \sum_{l=-\infty}^{\infty} |V(t-l)|^2 &= 1, \quad t \in (-\frac12, \frac12)
+\end{align*}
+
+For any $j \geq j_0$, define:
+\[
+  U_j(r, \theta) = 2^{-\frac34 j}W(2^{-j}r)V(\frac{2^{[\frac{j}{2}]\theta}}{2\pi})
+\]
+
+$[\frac{j}{2}]$ means rounding down. The whole formula describes a wedge-shaped window:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{assets/1.7 Continuous Curvelet Transform/Curvelet
+  tiling of frequency.png}
+  \caption{Curvelet tiling of frequency}
+\end{figure}
+
+Let the mother curvelet be $\phi_j(\omega)$, and $\phi_j(\omega) = U_j(\omega)$. Also introduce:
+\begin{itemize}
+  \item rotation angles $\theta_l = 2\pi \cdot [\frac{j}{2}] \cdot l$ with $l = 0, 1, \ldots$
+  such that $\theta_l \in \left[0, 2\pi\right)$.
+  \item translation parameters $k = (k_1, k_2)$ with $k_1, k_2 \in Z^2$.
+\end{itemize}
+
+With this we define:
+\[
+  \phi_{j, k, l}(x) = \phi_j(R_{\theta_l}(x - x_k^{(j, l)}))
+\]
+
+Where we have:
+\begin{align*}
+  x_k^{(j, l)} &= R_{\theta_l}^{-1}(2^{-j}k_1, 2^{-\frac{j}{2}}k_2) \\
+  R_{\theta_l} &= \begin{pmatrix}
+    \cos\theta_l & -\sin\theta_l \\
+    \sin\theta_l & \cos\theta_l
+  \end{pmatrix}
+\end{align*}
+
+A curvelet coefficient is the inner product between $f$ and $\phi_{j, k, l}$:
+\[
+  c_{j, k, l} = \langle f, \phi_{j, k, l} \rangle = \int f(x) \phi_{j, k, l}(x) \, dx
+\]
+
+Also according to Plancherel's theorem, we have such formula in frequency domain:
+\[
+  c_{j, k, l} = \frac{1}{(2\pi)^2} \int \hat{f}(\omega) \hat{\phi}_{j, k, l}(\omega) \, d\omega
+\]
+
+\subsection{\textbf{Discrete Curvelet Transform}}
+\subsubsection{\textbf{Definition}}
+
+Just like the definition of the continuous curvelet transform, we define radius window
+and angle window in Cartesian coordinates as:
+\begin{align*}
+  W_j(\omega) &= \sqrt{\Phi^2_{j+1}(\omega) - \Phi^2_{j}(\omega)} \\
+  V_j(\omega) &= V(2^{[\frac{j}{2}]}\frac{\omega_2}{\omega_1})
+\end{align*}
+
+Where we have:
+\[
+  \Phi_j(\omega_1, \omega_2) = \phi(2^{-j}\omega_1)\phi(2^{-j}\omega_2)
+\]
+
+Also introduce 2 expressions:
+\begin{align*}
+  \tan \theta_l &= l \cdot 2^{[\frac{j}{2}]}, \quad l = -2^{[\frac{j}{2}]}, \ldots, 2^{[\frac{j}{2}] - 1} \\
+  S_{\theta_l} &= \begin{bmatrix} 1 & 0 \\ \tan \theta_l & 1 \end{bmatrix}
+\end{align*}
+
+Now the Cartesian window can be described as:
+\[
+  U_j(\omega) = W_j(\omega)V_j(S_{\theta_l}\omega)
+\]
+
+Here is what it looks like in Cartesian coordinates:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{assets/1.8 Discrete Curvelet Transform/Curvelet
+  tiling of frequency.png}
+  \caption{Curvelet tiling of frequency in Cartesian}
+\end{figure}
+
+After a complex process (It wasn't given in paper actually :<), we can get the coefficient:
+\[
+  c_{j, k, l} = \int f(\omega) U_j(S^{-1}_{\theta_l}\omega) e^{i\langle S^{-T}_{\theta_l} b,
+  \omega \rangle} \, d\omega
+\]
+
+\subsubsection{\textbf{Fast Discrete Curvelet Transform}}
+
+Candès and others created a fast algorithm to compute the discrete curvelet transform,
+which is called \textbf{Fast Discrete Curvelet Transform (FDCT)}.
+
+There are 2 implementations of FDCT: \textbf{FDCT via Unequispaced FFT (FDCT-USFFT)} and
+\textbf{FDCT via Wrapping (FDCT-Wrapping)}. The latter is more accurate and faster, so it's
+widely used in practice.
+
+It is very hard to understand without math background, so do I. But don't worry, authors
+have provided the code in Matlab and C called \textbf{CurveLab}. You can download it
+from \url{http://www.curvelet.org/}.
+
+And there's also a README file in the code package, which is very helpful. Here I just
+repeat some key files of 2d MATLAB warpping version:
+
+\begin{itemize}
+  \item fdct\_wrapping.m: forward curvelet transform.
+  \item ifdct\_wrapping.m: inverse curvelet transform.
+  \item fdct\_warpping\_param.m: returns the location of curvelets in phase-space.
+  \item fdct\_wrapping\_dispcoef.m: returns a matrix of curvelet coefficients.
+  \item fdct\_wrapping\_pos2idx.m: for a given scale and angle, returns the indices of
+  curvelet closest to a given position.
+  \item fdct\_wrapping\_demo\_basic.m: a basic demo of the curvelet transform.
+  \item fdct\_wrapping\_demo\_denoise.m: a demo of image denoising using curvelets.
+  \item fdct\_wrapping\_demo\_denoise\_enhanced.m: an enhanced demo of image denoising
+  using curvelets.
+\end{itemize}
+
 \newpage
 \thispagestyle{empty}
 \begin{center}
@@ -992,7 +1136,7 @@ are 50Hz and 100Hz. The error is extremely small, which shows the good performan
 \newpage
 \subsection{\textbf{Sparsity}}
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 As we all know, Compressed Sensing is a typical problem of Machine Learning. So we need
 to understand what sparsity is before starting.
@@ -1032,7 +1176,7 @@ the receiver can reconstruct the signal by $\alpha$ and $D$.
 
 \subsection{\textbf{Norm}}
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 In mathematics, we often define a norm as a function that measures the size of a vector.
 The $l_p$-norm of a vector $x$ is:
@@ -1062,6 +1206,14 @@ $l_2$-norm is defined as:
 
 $l_2$-norm is also called \textbf{Euclidean norm}, which is the length of the vector.
 It's widely used in the least squares method.
+
+There is also a $l_{\infty}$-norm, which is defined as:
+\[
+  ||x||_{\infty} = \max(|x_1|, |x_2|, \ldots, |x_n|).
+\]
+
+$l_{\infty}$-norm is the maximum absolute value of the elements in the vector.It's widely
+used in image processing.
 
 \subsubsection{\textbf{Overfitting and $l_1$-norm sparsity}}
 
@@ -1102,7 +1254,7 @@ why $l_1$-norm proves sparsity.
 
 \subsection{\textbf{Convex Optimization}}
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 For arbitrary $x, y$ and $\mu \in [0, 1]$, then $\mu x + (1-\mu)y$ means all points
 on the line segment between $x$ and $y$. If $x, y$ are in a set $C$ and $\mu x + (1-\mu)y$
@@ -1176,7 +1328,7 @@ to find the best solution:
 
 And this introduces \textbf{projection matrix}.
 
-\subsubsection{\textbf{Defination}}
+\subsubsection{\textbf{Definition}}
 
 Actually, solve x is a process that use the linear combination of the column vectors of $A$
 to approximate $b$. We set a vector $p$ which is the most close to $b$ and is in the
@@ -1210,6 +1362,190 @@ process of forgetting and remembering. So I suggest you to review the knowledge
 regularly, not only the required courses but also things like this tutorial. Well, after this
 subsection, we will go into the most important part, \textbf{Compressed Sensing}. Hope you
 can understand it well.
+
+\subsection{\textbf{Image Quality Assessment (IQA)}}
+\subsubsection{\textbf{MSE and PSNR}}
+
+\textbf{Mean Squared Error (MSE)} is a basic metric for evaluating image quality. It
+measures the average squared difference between the original image and the distorted
+image. The formula is:
+\[
+  MSE = \frac{1}{mn} \sum_{i=0}^{m-1} \sum_{j=0}^{n-1} [I(i,j) - K(i,j)]^2
+\]
+
+$I$ is the original image, $K$ is the distorted image, and $m, n$ are the dimensions of
+the images.
+
+The image quality is better when MSE is smaller. However, MSE does not always align with
+human visual perception. For example, a tiny loss in high-frequency details may result a
+high MSE, but it may not be noticeable to human eyes.
+
+
+\textbf{Peak Signal-to-Noise Ratio (PSNR)} is the most common metric for evaluating image
+quality. It is derived from MSE and represents the ratio between the maximum possible
+signal power and the noise power. The formula is:
+\[
+  PSNR = 10 \log_{10} \left( \frac{MAX_I^2}{MSE} \right) = 10 \log_{10} SNR
+\]
+
+where $MAX_I$ is the maximum possible pixel value of the image, which is $2^{bit depth} - 1$.
+$MAX_I^{2}$ represents the maximum possible signal power.
+
+When PSNR is higher, MSE will be lower, indicating the image quality is better. Generally,
+a PSNR value above 30dB is considered acceptable for most applications. However, PSNR suffers
+from the same limitations as MSE, it doesn't think about human sensitivity to different types
+of distortions.
+
+Though MSE and PSNR have their limitations, they are still widely used due to their simplicity
+and ease of calculation. They provide a basic quantitative measure of image quality, but for
+more comprehensive assessments, other metrics such as Structural Similarity Index (SSIM) are
+often used.
+
+\subsubsection{\textbf{SSIM}}
+
+SSIM is an advanced metric, which is designed to better align with human visual perception.
+It considers three key aspects of image quality: luminance, contrast, and structure.
+\begin{itemize}
+  \item Luminance: This measures the brightness of the image. The luminance comparison
+  function is defined as:
+  \[
+    l(x,y) = \frac{2\mu_x \mu_y + C_1}{\mu_x^2 + \mu_y^2 + C_1}
+  \]
+  where $\mu_x$ and $\mu_y$ are the mean intensities of images $x$ and $y$, and $C_1$ is a
+  small constant to avoid instability when the denominator is close to zero.
+
+  \item Contrast: This measures the difference in intensity between pixels. The contrast
+  comparison function is defined as:
+  \[
+    c(x,y) = \frac{2\sigma_x \sigma_y + C_2}{\sigma_x^2 + \sigma_y^2 + C_2}
+  \]
+  where $\sigma_x$ and $\sigma_y$ are the standard deviations of images $x$ and $y$, and
+  $C_2$ is another small constant.
+
+  \item Structure: This measures the correlation between the two images. The structure
+  comparison function is defined as:
+  \[
+    s(x,y) = \frac{\sigma_{xy} + C_3}{\sigma_x \sigma_y + C_3}
+  \]
+  where $\sigma_{xy}$ is the covariance between images $x$ and $y$, and $C_3$ is a small
+  constant.
+\end{itemize}
+
+$C$ is set to avoid instability when the denominator is close to zero, usually decided by
+the dynamics of the image. The overall SSIM index is then calculated as:
+\[
+  SSIM(x,y) = [l(x,y)]^\alpha \cdot [c(x,y)]^\beta \cdot [s(x,y)]^\gamma
+\]
+
+To simplify, we usually set $\alpha = \beta = \gamma = 1$ and $C_3 = C_2/2$. So the formula
+becomes:
+\[
+  SSIM(x,y) = \frac{(2\mu_x \mu_y + C_1)(2\sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)
+  (\sigma_x^2 + \sigma_y^2 + C_2)}
+\]
+
+SSIM values range from -1 to 1, where 1 indicates perfect similarity between the two images.
+
+SSIM calculates a window (usually $11 \times 11$) to slide over the image, and
+computes the SSIM index for each window. The final SSIM index for the entire image
+is obtained by averaging the SSIM values of all windows.
+
+\subsection{\textbf{BayesShrink}}
+\subsubsection{\textbf{Introduction}}
+
+To denoise a signal, we can use wavelet transform to transform the signal to wavelet
+domain, then use a threshold to shrink the wavelet coefficients, and finally use inverse
+wavelet transform to reconstruct the denoised signal.
+
+There are many ways to choose the threshold, there are 2 common thresholds: \textbf{hard
+threshold} and \textbf{soft threshold}.
+
+Hard threshold means that if the absolute value of the wavelet coefficient is less than the
+threshold, then set it to zero. Otherwise, keep it unchanged. The formula is:
+\[
+  D^H(U, \lambda) = \begin{cases}
+    U, & |U| > \lambda \\
+    0, & |U| \leq \lambda
+  \end{cases}
+\]
+
+Soft threshold means that if the absolute value of the wavelet coefficient is less than the
+threshold, then set it to zero. Otherwise, shrink it by the threshold. The formula is:
+\[
+  D^S(U, \lambda) = \begin{cases}
+    sign(U)(|U| - \lambda), & |U| > \lambda \\
+    0, & |U| \leq \lambda
+  \end{cases}
+\]
+
+The most concerned thing is how to choose the threshold $\lambda$. A fixed universal threshold
+is often used, which is defined as:
+\[
+  \lambda = \sigma \sqrt{2 \log n}
+\]
+
+where $\sigma$ is the noise level and $n$ is the number of wavelet coefficients.
+
+However, this threshold is not adaptive to the signal, and may lead to problems. So that's
+why \textbf{BayesShrink} comes out.
+
+\subsubsection{\textbf{BayesShrink}}
+
+The basic model of BayesShrink is:
+\[
+  Y = X + W
+\]
+
+where $Y$ is the observed signal, $X$ is the original signal, and $W$ is the noise. We
+assume that $W \sim N(0, \sigma^2)$, and $X$ is independent of $W$.
+
+The goal is to estimate $X$ from $Y$. BayesShrink finds a $T$ to make the MSE between $X$
+and $\hat{X}$ minimum, where $\hat{X}$ is the estimated signal after thresholding.
+
+And they also find that:
+\[
+  T = \frac{\sigma^2}{\sigma_X^2}
+\]
+
+$\sigma^2$ is the noise variance, and $\sigma_X^2$ is the variance of the original signal.
+
+To estimate $\sigma^2$, we can use the HH1 subband of wavelet transform, because it is
+mainly composed of noise.
+\[
+  \sigma^2 \approx \frac{1}{0.6745} median(|HH1|)
+\]
+
+To estimate $\sigma_X^2$, we can use the variance of the observed signal:
+\[
+  \sigma_Y^2 = \frac{1}{n} \sum_{i=1}^{n} Y_i^2
+\]
+
+Assume that noise and signal are independent, then we have:
+\[
+  \sigma_Y^2 = \sigma_X^2 + \sigma^2
+\]
+
+So we can get:
+\[
+  \sigma_X^2 = \max(\sigma_Y^2 - \sigma^2, 0)
+\]
+
+max is used to avoid negative values.
+
+For a noisy image, we can follow such steps to denoise it:
+\begin{itemize}
+  \item Perform wavelet transform on the noisy image to get the wavelet coefficients.
+  \item Estimate the noise variance $\sigma^2$ using the HH1 subband.
+  \item For each subband, estimate the signal variance $\sigma_X^2$ using the wavelet
+  coefficients.
+  \item Calculate the threshold $T$ for each subband using $T = \frac{\sigma^2}{\sigma_X^2}$.
+  \item Apply soft thresholding$^{[9]}$ to the wavelet coefficients using the calculated thresholds.
+  \item Perform inverse wavelet transform to reconstruct the denoised image.
+\end{itemize}
+
+Moreover, if the standard deviation of the noise is known (Usually happens when the
+noise is added to the signal), we can directly use its square as the noise variance
+$\sigma^2$.
 
 \newpage
 \thispagestyle{empty}
@@ -2121,6 +2457,426 @@ is accurate as CoSaMP and don't have to give the sparsity level $K$ in advance. 
 is a critical point for engineering applications, because we don't know how many
 atoms we need to choose in most cases.
 
+\newpage
+\thispagestyle{empty}
+\begin{center}
+    \vspace*{96pt}
+    \fontsize{60}{60}\customfont{4}\par
+    \fontsize{26}{31.2}\section{\textbf{Image processing}}\par % 标题
+    \vspace{25pt}
+    \fontsize{18}{21.6}\customfont{\textit{Ultimately you should follow advice not because
+    someone tells you to, but because it was something that you already knew you should be
+    doing. --- Terence Tao}}\par % 名言
+    \vfill
+\end{center}
+
+\newpage
+\subsection{\textbf{TV Regularization}}
+\subsubsection{\textbf{Definition}}
+
+Denoising is a common problem in signal processing. And Total Variation (TV)
+regularization is a powerful method for denoising, especially for images. The basic
+idea of TV regularization is to minimize the total variation of the signal while
+keeping it close to the observed data.
+
+It is firstly introduced by Rudin, Osher and Fatemi in 1992. Natural images are
+usually piecewise smooth, which means that the gradient of the image is sparse. TV
+regularization exploits this property to denoise the image.
+
+The total variation of an image is defined as:
+\[
+  TV(x) = \sum_{i,j} \sqrt{(x_{i+1,j} - x_{i,j})^2 + (x_{i,j+1} - x_{i,j})^2}
+\]
+
+It calculates the $l_2$-norm of the gradient at each pixel, then sums them up. And
+it is isotropic, which means it treats all directions equally. This makes TV
+regularization won't be biased by different images.
+
+\subsubsection{\textbf{ROF Model and Chambolle Algorithm}}
+
+Rudin et al. proposed the following model for image denoising:
+\[
+  \min_x \frac{1}{2} ||x - y||_2^2 + \lambda TV(x)
+\]
+
+Where $y$ is the observed noisy image, $x$ is the denoised image, and $\lambda$ is
+a regularization parameter that controls the trade-off between data fidelity and
+total variation. The bigger $\lambda$ is, the smoother the denoised image will be.
+
+However, ROF model faces a challenge that the expression of $TV(x)$ is not
+differentiable. This makes it difficult to use gradient-based optimization
+methods. To solve this problem, we have to add a small constant $\epsilon$.
+
+It makes sense. But the speed of convergence is slow, the stability is not good. So
+Chambolle proposed a dual algorithm to solve the ROF model.
+
+Chambolle found that $TV(x)$ can be expressed as:
+\[
+  TV(x) = \max_{||p||_\infty \leq 1} \langle \nabla p, x \rangle
+\]
+
+Where $p$ is a dual variable field, or a 2D vector field for images. This means
+the total variation can be expressed as the maximum inner product of the gradient
+of $p$ and $x$, subject to the constraint that the infinity norm of $p$ is less
+than or equal to 1.
+
+And we can solve ROF model by interation:
+\begin{enumerate}
+  \item Initialize $p = 0$.
+  \item Update $p$ by:
+  \[
+    p^{n+1} = \mathcal{P}_{||p||_\infty \leq 1}(p^{n} + \tau \nabla (f - \lambda div(p^n)))
+  \]
+  First calculate the gradient of $p$, then move a step $\tau$ in the direction of
+  the gradient, then project $p$ onto the constraint set $||p||_\infty \leq 1$.
+  \item Repeat step 2 until convergence.
+  \item The denoised image is given by:
+  \[
+    x = f - \lambda div(p)
+  \]
+\end{enumerate}
+
+Chambolle proved that when $\tau \leq \frac14$, the algorithm converges to the
+solution. So the $\tau$ is usually set to 0.25.
+
+\subsubsection{\textbf{Fast Gradient Projection (FGP)}}
+
+Chambolle's algorithm is simple and effective, but it is not the fastest. Beck and
+Teboulle proposed a fast gradient projection (FGP) method to decrease the time
+complexity from $O(1/k)$ to $O(1/k^2)$, where $k$ is the number of iterations.
+
+FGP mainly obeys Chambolle's framework, but it uses Nesterov's acceleration to
+update $p$. The steps are:
+\begin{enumerate}
+  \item Initialize $p^0 = 0$, $q^0 = 0$, $t_0 = 1$.
+  \item Update $p$ by:
+  \[
+    p^{n+1} = \mathcal{P}_{||p||_\infty \leq 1}(q^{n} + \tau \nabla (f - \lambda div(q^n)))
+  \]
+  \item Update $t$ by:
+  \[
+    t_{n+1} = \frac{1 + \sqrt{1 + 4t_n^2}}{2}
+  \]
+  \item Update $q$ by:
+  \[
+    q^{n+1} = p^{n+1} + \frac{t_n - 1}{t_{n+1}}(p^{n+1} - p^n)
+  \]
+  \item Repeat steps 2-4 until convergence.
+  \item The denoised image is given by:
+  \[
+    x = f - \lambda div(p)
+  \]
+\end{enumerate}
+
+$\tau$ is still set to 0.25. FGP converges faster than Chambolle's algorithm,
+especially when high accuracy is required.
+
+\subsubsection{\textbf{Chambolle-Pock Algorithm}}
+
+Chambolle-Pock algorithm is a primal-dual algorithm for convex optimization
+problems. It is even much faster than FGP in practice. It can solve a wide range of
+problems, including TV regularization, TGV regularization, and many others.
+
+To use Chambolle-Pock algorithm, we need the problem in the form of:
+\[
+  \min_x F(Kx) + G(x)
+\]
+
+Where $F$ and $G$ are convex functions, and $K$ is a linear operator. For TV
+regularization, we can rewrite the ROF model as:
+\[
+  \min_{u,v} \frac{1}{2\lambda} ||u - f||_2^2 + \alpha_1 ||\nabla u - v||_1 +
+  \alpha_0 ||\nabla v||_1
+\]
+
+Where $u$ is the denoised image, $f$ is the observed image, $v$ is an auxiliary
+variable, $\alpha_1$ and $\alpha_0$ are regularization parameters. The first term
+is the data fidelity term, the second term is the first-order TV regularization, and
+the third term is the second-order TV regularization.
+
+Before applying Chambolle-Pock algorithm, we need to define:
+\[
+  F^{*}(p, q) = \delta_{||p||_\infty \leq \alpha_1}(p) + \delta_{||q||_\infty \leq
+  \alpha_0}(q)
+\]
+
+Where $\delta$ is the indicator function, which is 0 if the condition is satisfied,
+and $\infty$ otherwise. And $F^*$ is the convex conjugate of $F$.
+
+$\text{prox}$ is the proximal operator, which is defined as:
+\[
+  \text{prox}_{\tau G}(x) = \arg\min_y \frac{1}{2} ||x - y||_2^2 + \tau G(y)
+\]
+
+Where $G(x) = \frac{1}{2\lambda} ||x - f||_2^2$. 
+
+This expression is the same as to project $x$ onto the $l_2$ ball centered at $f$
+with radius $\sqrt{2\lambda}$ in TV regularization, we can calculate it as:
+\[
+  \text{prox}_{\tau G}(x) = \frac{x + \tau \frac{f}{\lambda}}{1 + \frac{\tau}{\lambda}}
+\]
+
+Or:
+\[
+  \text{prox}_{\sigma \delta_{||p||_\infty \leq \alpha}}(p) = \frac{p}{\max(1,
+  \frac{||p||_2}{\alpha})}
+\]
+
+\vspace{1em}
+
+After a long derivation, we can introduce Chambolle-Pock algorithm now:
+\begin{enumerate}
+  \item Initialize $x^0 = (u^0, v^0)$, $y^0 = (p^0, q^0)$, $\bar{x}^0 = x^0$.
+  \item Update $p, q$ by:
+  \begin{align*}
+    p^{n+1} &= \text{prox}_{\sigma \delta_{||p||_\infty \leq \alpha_1}}(p^n + \sigma
+    (\nabla \bar{u}^n - \bar{v}^n)) = \frac{p^n + \sigma (\nabla \bar{u}^n -
+    \bar{v}^n)}{\max(1, \frac{||p^n + \sigma (\nabla \bar{u}^n - \bar{v}^n)||_2}{\alpha_1})}
+  \\
+    q^{n+1} &= \text{prox}_{\sigma \delta_{||q||_\infty \leq \alpha_0}}(q^n + \sigma \nabla
+    \bar{v}^n) = \frac{q^n + \sigma \nabla \bar{v}^n}{\max(1, \frac{||q^n + \sigma \nabla
+    \bar{v}^n||_2}{\alpha_0})}
+  \end{align*}
+  \item Combine $p, q$ into $y$.
+  \[
+    y^{n+1} = (p^{n+1}, q^{n+1})
+  \]
+  \item Update $x$ by:
+  \[
+    x^{n+1} = \text{prox}_{\tau G}(x^n - \tau K^T y^{n+1}) = \left(
+    \frac{u^n + \tau \frac{f}{\lambda} + \tau div(p^{n+1})}{1 + \frac{\tau}{\lambda}},
+    v^n + \tau div(q^{n+1}) \right)
+  \]
+  Where $K^T$ is the adjoint operator of $K$.
+  \item Update $\bar{x}$ by:
+  \[
+    \bar{x}^{n+1} = x^{n+1} + \theta (x^{n+1} - x^n)
+  \]
+  Where $\theta$ is a relaxation parameter, usually set to 1.
+  \item Repeat steps 2-5 until convergence.
+  \item The denoised image is given by $x$.
+\end{enumerate}
+
+Besides, $\tau$ and $\sigma$ should satisfy $\tau \sigma ||K||^2 < 1$. $K$ is:
+\[
+  K = \begin{pmatrix}
+    \nabla & -I \\
+    0 & \nabla
+  \end{pmatrix}
+\]
+
+Most of the time we can set $\tau = \sigma = 0.2$ in practice, or $1/\sqrt{8}$
+for better convergence.
+
+
+\subsubsection{\textbf{MATLAB Example}}
+
+This example uses FDCT and Chambolle algorithm.
+
+\begin{lstlisting}[language=Matlab]
+clear; clc; close all;
+
+function u = rof_tv_denoise(f, mask, lambda, niter)
+    % Chambolle Algorithm
+    [N, M] = size(f);
+    px = zeros(N, M);  % p
+    py = zeros(N, M);
+    tau = 0.25;
+
+    for k = 1:niter
+        div_p = [px(:,end)-px(:,1), -diff(px,1,2)] + ...
+                [py(end,:)-py(1,:); -diff(py,1,1)];
+
+        u = f - lambda * div_p;
+        u(mask) = f(mask);
+
+        ux = [diff(u,1,2), u(:,1)-u(:,end)];
+        uy = [diff(u,1,1); u(1,:)-u(end,:)];
+
+        px = px + tau * ux;
+        py = py + tau * uy;
+        norm_p = max(1, sqrt(px.^2 + py.^2));
+        px = px ./ norm_p;
+        py = py ./ norm_p;
+    end
+end
+
+% Read the picture
+img = im2double(imread('Lena.jpg'));
+if size(img,3) == 3
+    img = rgb2gray(img);
+end
+[M, N] = size(img);
+
+% Parameters
+sampling_ratio = 0.3;
+rng(42);
+mask = rand(M, N) < sampling_ratio;
+
+noise_level = 0.01;
+b = img .* mask + noise_level * randn(M, N) .* mask;
+
+% Init
+x      = b;
+maxIter = 200;
+lambda  = 0.005;
+prev_psnr = 0;
+tol_psnr  = 0.002;
+lambda_tv = 0.05;
+n_tv_iter = 200;
+
+for iter = 1:maxIter
+    x_old = x;
+    % FDCT
+    C = fdct_wrapping(x, 1, 2, ceil(log2(min(M, N)) - 2), 64);
+    sigma_n2 = noise_level^2;
+    for j = 1:length(C)
+        for l = 1:length(C{j})
+            coef      = C{j}{l};
+            var_coef  = mean(coef(:).^2);
+            sigma_x2  = max(var_coef - sigma_n2, eps);
+            T         = sigma_n2 / sqrt(sigma_x2);
+            C{j}{l}   = sign(coef) .* max(abs(coef) - T, 0);
+        end
+    end
+
+    % IDFCT and TV regularization
+    x_rec = ifdct_wrapping(C, 1, M, N);
+    x_rec = rof_tv_denoise(x_rec, mask, lambda_tv, n_tv_iter);
+
+    x = x_rec;
+    x(mask) = b(mask);
+
+    % PSNR
+    mse = mean((x(:) - img(:)).^2);
+    curr_psnr = 10 * log10(1 / mse);
+    if mod(iter,10)==0
+        fprintf('Iter %d: PSNR = %.2f dB\n', iter, curr_psnr);
+    end
+    if (iter>1 && abs(curr_psnr - prev_psnr)<tol_psnr) || (curr_psnr-prev_psnr)<0
+        fprintf('Stopped at Iter %d\n', iter);
+        break;
+    end
+    prev_psnr = curr_psnr;
+end
+
+% Plot the result
+figure;
+subplot(1,3,1), imshow(img),     title('Origin');
+subplot(1,3,2), imshow(b),       title('Sampled');
+subplot(1,3,3), imshow(x),       title('Reconstructed');
+xlabel(sprintf('PSNR = %.2f dB', curr_psnr), 'FontSize', 10);
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/3.4 TV Regularization/FDCT
+  and Chambolle.png}
+  \caption{FDCT and Chambolle Algorithm Example}
+\end{figure}
+
+\subsection{\textbf{Alternating Direction Method of Multipliers (ADMM)}}
+\subsubsection{\textbf{Argumented Lagrangian Multiplier (ALM)}}
+
+Let's start from a constrained optimization problem:
+\[
+  \min_x f(x), \quad s.t. \quad h(x) = 0
+\]
+
+We can form a Lagrangian function:
+\[
+  L(x, y) = f(x) + y^T (Ax - b)
+\]
+
+The origin problem is equivalent to the saddle point of $L(x, y)$. Usually we can
+solve it by Lagrange dual ascent method:
+\begin{enumerate}
+  \item Initialize $x^0, y^0$.
+  \item Update $x$ by:
+  \[
+    x^{k+1} = \arg\min_x L(x, y^k)
+  \]
+  \item Update $y$ by:
+  \[
+    y^{k+1} = y^k + \alpha (Ax^{k+1} - b) \quad (\text{$\alpha$ is the step size})
+  \]
+  \item Repeat steps 2-3 until convergence.
+  \item The solution is given by $x^*$.
+\end{enumerate}
+
+This method requires $f(x)$ to be strictly convex and differentiable. That means
+we can't solve problems with non-smooth terms like $l_1$-norm or TV regularization.
+To solve this problem, we can use Argumented Lagrangian Multiplier (ALM) method.
+
+ALM adds a quadratic penalty term to the Lagrangian function:
+\[
+  L_\rho(x, y) = f(x) + y^T (Ax - b) + \frac{\rho}{2} ||Ax - b||_2^2
+\]
+
+This penalty term makes the function strongly convex, which helps to stabilize the
+optimization process. The ALM method is similar to the dual ascent method:
+\begin{enumerate}
+  \item Initialize $x^0, y^0$.
+  \item Update $x$ by:
+  \[
+    x^{k+1} = \arg\min_x L_\rho(x, y^k)
+  \]
+  \item Update $y$ by:
+  \[
+    y^{k+1} = y^k + \rho (Ax^{k+1} - b)
+  \]
+  \item Repeat steps 2-3 until convergence.
+  \item The solution is given by $x^*$.
+\end{enumerate}
+
+ALM directly uses $\rho$, which means higher numerical stability. However, $f(x)$
+and $A$ will be quite complex in some cases, which makes step 2 hard to solve.
+This is where ADMM comes in.
+
+\subsubsection{\textbf{ADMM}}
+
+ADMM solves problems in the form of:
+\[
+  \min_{x,z} f(x) + g(z), \quad s.t. \quad Ax + Bz = c
+\]
+
+Now set ALM for this problem:
+\[
+  L_\rho(x, z, y) = f(x) + g(z) + y^T (Ax + Bz - c) + \frac{\rho}{2}
+  ||Ax + Bz - c||_2^2
+\]
+
+If we optimize $x$ and $z$ together, it may be quite hard as the origin problem.
+So ADMM optimizes $x$ and $z$ alternately, called \textbf{Gauss-Seidel} method:
+\begin{enumerate}
+  \item Initialize $x^0, z^0, y^0$.
+  \item Update $x$ by:
+  \[
+    x^{k+1} = \arg\min_x L_\rho(x, z^k, y^k) = \arg\min_x\left[ f(x) + \frac{\rho}{2}
+    ||Ax + Bz^k - c + \frac{y^k}{\rho}||_2^2\right]
+  \]
+  \item Update $z$ by:
+  \[
+    z^{k+1} = \arg\min_z L_\rho(x^{k+1}, z, y^k) = \arg\min_z\left[ g(z) + \frac{\rho}{2}
+    ||Ax^{k+1} + Bz - c + \frac{y^k}{\rho}||_2^2\right]
+  \]
+  \item Update $y$ by:
+  \[
+    y^{k+1} = y^k + \rho (Ax^{k+1} + Bz^{k+1} - c)
+  \]
+  \item Repeat steps 2-4 until convergence.
+  \item The solution is given by $x^*$ and $z^*$.
+\end{enumerate}
+
+In short, ADMM is a framwork to improve the efficiency of ALM. It is especially
+useful when $f(x)$ and $g(z)$ are separable, which means they can be optimized
+independently. This is often the case in practice, especially when $f(x)$ and
+$g(z)$ are convex functions.
+
+When facing a huge, complex and separable problem, ADMM is a good choice.
+For example, Compressed Sensing, TV regularization, distributed optimization, etc.
+
+\newpage
 \section*{\textbf{Afterword}}
 \addcontentsline{toc}{section}{Afterword}
 
@@ -2172,6 +2928,13 @@ So let's end here. Class is over, dismiss!
   \item Koredianto Usman. Introduction to Orthogonal Matching Pursuit[EB/OL].
   2017-08-30 [2025-07-20] \url{https://korediantousman.staff.telkomuniversity.ac.id/
   files/2017/08/main-1.pdf}
+  \item 郑静静,印兴耀,张广智.基于Curvelet变换的多尺度分析技术[J].石油地球物理勘探,2009,
+  44(05):543-547+521-522+650.
+  \item Candès E J et al．Fast discrete curvelet transforms．Applied and Computational
+  Mathematics, 2005.
+  \item S. G. Chang, Bin Yu and M. Vetterli, "Adaptive wavelet thresholding for image
+  denoising and compression," in IEEE Transactions on Image Processing, vol. 9, no. 9,
+  pp. 1532-1546, Sept. 2000, doi: 10.1109/83.862633.
 \end{enumerate}
 
 \end{document}
