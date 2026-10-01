@@ -97,15 +97,6 @@ latexmk -C    # remove everything, including the PDF
 
 The output is `Introduction to Compressed Sensing.pdf`.
 
-## Repository layout
-
-```
-Introduction to Compressed Sensing.tex   the tutorial itself
-elegantbook.cls                          document class
-assets/                                  figures used in the text
-.latexmkrc, .gitignore                   build configuration
-```
-
 ## License
 
 This tutorial is released under
