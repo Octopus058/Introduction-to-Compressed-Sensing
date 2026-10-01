@@ -1,163 +1,71 @@
-\documentclass[12pt]{ctexart}
-\usepackage{xeCJK}
-\usepackage{fontspec}
-\usepackage{titlesec}
-% 设置全局字体为楷体
-\setCJKmainfont{KaiTi}[
-    BoldFont={SimHei}, % 使用黑体作为粗体
-    ItalicFont={STXinwei}, % 使用楷体作为斜体
-    BoldItalicFont={SimHei} % 使用黑体作为粗斜体
-]
-% 设置英文字体
-\setmainfont{Times New Roman}
+\documentclass[lang=en,color=blue,mode=fancy,titlestyle=hang]{elegantbook}
 
-% 设置section标题的字号
-\titleformat{\section}
-  {\normalfont\fontsize{26}{31.2}\bfseries}
-  {}
-  {0pt}
-  {}
+% ---- Title Information ----
+\title{Introduction to Compressed Sensing}
+\author{Lancet Ross}
+\date{Oct 1, 2026}
+\version{2.1}
+\extrainfo{``What we know is not much. What we do not know is immense. --- P. S. Laplace''}
 
-% 设置页面
+\cover{assets/3.1 What is Compressed Sensing/Compressed Sensing.png}
+
+% ---- Additional Packages ----
 \usepackage{amsmath}
-\usepackage{hyperref}
-\hypersetup{breaklinks=true}
-\usepackage{geometry}
-\usepackage{tabularx}
 \usepackage{array}
+\usepackage{booktabs}
 \usepackage{float}
 \usepackage{wrapfig}
-\usepackage{lastpage}
-\usepackage{titlesec}
-\usepackage{indentfirst}
-\usepackage{tikz}
-\usepackage{everypage}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{listings}
 \usepackage{caption}
 \captionsetup[figure]{labelformat=empty}
+% Table of contents: body size throughout, opened up with leading.
+\setlength{\cftbeforechapskip}{1.1em}
+\setlength{\cftbeforesecskip}{0.5em}
+\setlength{\cftbeforesubsecskip}{0.15em}
 \usepackage{xcolor}
-\usepackage{listings}
-\PassOptionsToPackage{hyphens}{url}
 \usepackage{url}
 \usepackage{xurl}
-\usepackage{hyperref}
-\hypersetup{breaklinks=true}
 \usepackage{tikz}
-% 插图片
-\usepackage{graphicx}
-% 设置摘要页缩减 
-\usepackage{changepage}
-% 设置页眉页脚
-\usepackage{fancyhdr}
-\setlength{\headheight}{12.64723pt}
-\addtolength{\topmargin}{-0.64723pt}
-% 清空页眉页脚
-\pagestyle{fancy}
-% 设置列表缩进
-\usepackage[shortlabels]{enumitem}
-% 设置修改默认的section标题大小
-\usepackage{titlesec}
-\titleformat*{\section}{\LARGE}
-\titleformat*{\subsection}{\Large}
-\titleformat*{\subsubsection}{\Large}
-% 使用数学宏包
-\usepackage{amsmath}
-% 设置表格的列格式
-\usepackage{array}
-% 三线表宏包
-\usepackage{booktabs}
-% 设置产考文献不输出默认名
-\usepackage{etoolbox}
-\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
-% 设置等宽的代码字体
-\setmonofont{Courier New}
-% 颜色
-\usepackage{xcolor}
 
+% ---- Fonts ----
+% The class loads ctex with fontset=none, so the CJK font must be set here.
+% The tutorial is English, but it names the Chinese term 压缩感知 and cites one
+% Chinese reference.
+\usepackage{xeCJK}
+\setCJKmainfont{Microsoft YaHei}
+\setmonofont{Courier New}
+
+% ---- Code listing style ----
 \lstset{
   language=Matlab,
-  basicstyle=\small\ttfamily,       % 稍小的等宽字体
-  keywordstyle=\color{blue}\bfseries,  % 关键字蓝色加粗
-  commentstyle=\color{gray}\itshape,   % 注释灰色斜体
-  stringstyle=\color{orange},         % 字符串橙色
-  numbers=left,                       % 左侧显示行号
-  numberstyle=\tiny\color{gray},     % 行号样式
-  stepnumber=1,                       % 每行都编号
-  numbersep=8pt,                      % 行号与代码间距
-  showstringspaces=false,             % 不用特殊符号显示空格
-  breaklines=true,                    % 自动断行
+  basicstyle=\small\ttfamily,
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{orange},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
 }
-
-% 绘制页面边框
-\usepackage{everypage}
-\AddEverypageHook{
-  \begin{tikzpicture}[remember picture, overlay]
-    \draw[thick] ([xshift=0.5cm, yshift=0.5cm]current page.south west) rectangle ([xshift=-0.5cm, yshift=-0.5cm]current page.north east);
-  \end{tikzpicture}
-}
-
-% 设置自定义字体
-\newfontfamily\customfont{Freestyle Script}
-\newfontfamily\haettenfont{Haettenschweiler}
-\setCJKmainfont{Microsoft YaHei}
-\setmainfont{TeX Gyre Termes}
-\renewcommand{\contentsname}{Table of Contents}
-
-% 引用格式
-\newenvironment{mdquote}
-{%
-  \par\noindent
-  \begin{list}{}{%
-      \setlength{\leftmargin}{1em}%
-      \setlength{\rightmargin}{0pt}%
-      \setlength{\itemindent}{0pt}%
-      \setlength{\listparindent}{\parindent}%
-      \setlength{\topsep}{0.5\baselineskip}%
-  }
-  \item[\textbf{>}\ ]\itshape
-}
-{\end{list}\par}
-
 
 \begin{document}
 
-% 标题页
-\begin{titlepage}
-    \centering
-    \vspace*{96pt}
-    \fontsize{26}{31.2}\selectfont{Introdution to Compressed Sensing}\par % 主标题
-    \vspace{39pt}
-    \fontsize{22}{26.4}\selectfont{\haettenfont v1 .1\normalfont}\par % 版本
-    \vspace{52.8pt}
-    \fontsize{18}{21.6}\selectfont{Author: \customfont{Lancet Ross}}\par % 作者
-    \fontsize{18}{21.6}\selectfont{Last Edited on: Sept 8th, 2025}\par % 最后编辑时间
-    \vfill
-\end{titlepage}
+\maketitle
 
-% 目录页
-\newpage
-\thispagestyle{empty}
-\small
+\frontmatter
 \tableofcontents
-\newpage
-% 目录页后面是第一页
-\setcounter{page}{1}
 
-% 开始写正文
-% 设置正文的页边距
-\newgeometry{top=3cm, left=3.5cm, right=3.5cm}
-% 设置正文的页眉页脚
-\fancyhf{}
-\fancyhead[C]{ }
-% 此处修改右上角页码
-\fancyhead[R]{Page \thepage\ of\ \NoHyper\pageref{LastPage}\endNoHyper}
-\fancyhead[L]{\customfont Introdution to Compressed Sensing}
-\fancyfoot[C]{\bfseries\thepage}
+\mainmatter
 
-% 序言页
-\newpage
-\titleformat{\section}[block]{\normalfont\Large\bfseries\centering}{}{0pt}{}
-\section*{\textbf{Preface}}
-\addcontentsline{toc}{section}{Preface}
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+\linespread{1.55}\selectfont
 
 Human beings have run into 21st century. The rapid development of information technology
 has greatly increased the amount of data we need. It's clear that the real world is analog
@@ -199,26 +107,34 @@ Let's rock and roll!
   Jul 24th, 2025
 \end{flushright}
 
-\newpage
-\thispagestyle{empty}
-\begin{center}
-    \vspace*{96pt}
-    \fontsize{60}{60}\customfont{1}\par
-    \fontsize{26}{31.2}\section{\textbf{Signal Transformation}}\par % 标题
-    \vspace{25pt}
-    \fontsize{18}{21.6}\customfont{\textit{What we know is not much. What we do not know is
-    immense. --- P. S. Laplace}}\par % 名言
-    \vfill
-\end{center}
+\linespread{1.2}\selectfont
 
-\fontsize{12}{14}
-\newpage
-\subsection{\textbf{Discrete Fourier Transform}}
+\chapter{Signal Transformation}
+
+\subsection*{Overview}
+
+Compressed sensing rests on one observation: most signals are sparse in some domain, even
+when they look dense in the one you started with. Finding that domain is the whole job of
+this chapter, and everything that follows assumes you can name a transform in which your
+signal has few significant coefficients.
+
+We work through the two families that matter. The Fourier family covers the discrete
+Fourier transform, its non-uniform variant, and the discrete cosine transform, while the
+time-frequency family covers the short time Fourier transform and the continuous and
+discrete wavelet transforms. The chapter closes with curvelets, which handle edges better
+than wavelets do.
+
+Every transform here follows the same pattern: a continuous version for the theory, a
+discrete version you actually compute, and a fast algorithm for the discrete one, which
+the chapter gives alongside the definition.
+
+
+\section{Discrete Fourier Transform}
 
 We have learned CTFT, CTFS, LT, DTFT and ZT in Signals and Systems. In this section
 we will introduce the Discrete Fourier Transform (DFT).
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 The Discrete Fourier Transform (DFT) is created on the basis of the Discrete
 Fourier Series (DFS). If we call a periodic signal $x_p(t)$, then we should notice
@@ -248,19 +164,18 @@ Then we can rewrite the DFT and IDFT:
   x(n) = \frac{1}{N}\sum_{k=0}^{N-1} X(k)\,W^{-kn},\quad n=0,1,\dots,N-1.
 \]
 
-\subsubsection{\textbf{Properties}}
+\subsection{Properties}
 
 DFT processes discrete periodic signals. Its core is to periodic extend a finite
 discrete sequence and still get a finite discrete sequence after DFT.
 
-\paragraph{\textbf{Linearity}}\mbox{}\\
+\subsubsection{Linearity}
 \[
   DFT[a_1x_1(n) + a_2x_2(n)] = a_1DFT[x_1(n)] + a_2DFT[x_2(n)].
 \]
 
-\paragraph{\textbf{Shifting}}\mbox{}\\
-
-\textit{Firstly we need to notice 2 things:}
+\subsubsection{Shifting}
+\textit{Firstly we need to notice two things:}
 
 \textit{1. $x_p(n) = x((n))_N$ This means that $x_p(n)$ is a periodic signal with 
 period $N$}
@@ -273,8 +188,7 @@ Shift m samples), then we have$Y(k) = W^{mk}X(k)$
 \textbf{Frequency shifting} is that if $Y(k) = X((k-l))_NR_N(k)$, then we have
 $y(n) = W^{-nl}x(n)$
 
-\paragraph{\textbf{Circular Convolution}}\mbox{}\\
-
+\subsubsection{Circular Convolution}
 In \textbf{time} domain if $y(n) = x(n)h(n)$ then we have:
 \[
  Y(k) = \frac{1}{N}\sum_{n=0}^{N-1} X(l)H((k-l))_NR_N(k) = \frac{1}{N}\sum_{n=0}^{N-1}
@@ -286,12 +200,12 @@ In \textbf{frequency} domain if $Y(k) = X(k)H(k)$ then we have:
   y(n) = \sum_{n=0}^{N-1} x(m)h((n-m))_NR_N(n) = \sum_{n=0}^{N-1} h(m)x((n-m))_NR_N(n).
 \]
 
-\paragraph{\textbf{Parseval's Theorem}}\mbox{}\\
+\subsubsection{Parseval's Theorem}
 \[
   \sum_{n=0}^{N-1} |x(n)|^2 = \frac{1}{N}\sum_{k=0}^{N-1} |X(k)|^2.
 \]
 
-\paragraph{\textbf{DFT and ZT}}\mbox{}\\
+\subsubsection{DFT and ZT}
 \[
   X(k) = X(z)|_{z=W^k}
 \]
@@ -300,7 +214,7 @@ In \textbf{frequency} domain if $Y(k) = X(k)H(k)$ then we have:
   X(z)|_{z=e^{-j\frac{2\pi}{N}k}} = X(k)
 \]
 
-\subsubsection{\textbf{Fast Fourier Transform}}
+\subsection{Fast Fourier Transform}
 
 The Fast Fourier Transform (FFT) is an algorithm to compute the DFT efficiently. The DFT
 has a time complexity of $O(N^2)$, which is not efficient for large $N$. The FFT reduces
@@ -353,16 +267,16 @@ xlim([0 250])
 
 \end{lstlisting}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.9\textwidth]{assets/1.1 Discrete Fourier Transform/FFT
   Example.png}
   \caption{MATLAB FFT Example}
 \end{figure}
 
-\subsection{\textbf{Non Uniform Fourier Transform}}
+\section{Non Uniform Fourier Transform}
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 FFT is fast, but also limited. The fact puts us into a dilemma: DFT requires that the
 sampling points are uniformly distributed, but in real world the sampling points are not
@@ -379,7 +293,7 @@ f = sin(2*pi*0.5*t) + 0.5*cos(2*pi*2*t);
 This signal has 100 uniformly distributed sampling points and 100 non-uniformly ones,
 How to solve this problem by NUFT?
 
-\subsubsection{\textbf{Process}}
+\subsection{Process}
 
 In fact, NUFT puts the non-uniformly distributed sampling points into uniformly
 distributed ones, and then uses FFT. Academically speaking, NUFT uses convolution and
@@ -387,8 +301,7 @@ interpolation to reflect those sampling points into uniform grids. For example, 
 200 sampling points can be distributed into (0,20) by every 0.1 seconds (according to
 the size of interval and oversampling factor actually). Then use NUFFT.
 
-\paragraph{\textbf{Kernel}}\mbox{}\\
-
+\subsubsection{Kernel}
 To interpolate sampling points, we introduce Kernel. Kernel is a function that
 describes the shape of the interpolation.
 
@@ -419,18 +332,17 @@ and $\alpha$ is the oversampling factor (commonly 1.25, 1.5 or 2.0). The KB Kern
 theoretically optimal and used in libraries such as FINUFFT, though its computation is
 more involved.
 
-\paragraph{\textbf{gridding}}\mbox{}\\
-
+\subsubsection{gridding}
 The size of the grid equals to the oversampling factor times the original signal's size.
 The steps of gridding are as follows: seek grid range, calculate the weight of kernel,
 weighted accumulate to grid points, oversample the grid points.
 
-\subsubsection{\textbf{FINUFFT}}
+\subsection{FINUFFT}
 
 Things we talked above are the basic concepts of NUFT. There are many libraries
 that can help us to do NUFT. For example the most famous one, \textbf{FINUFFT}.
 
-FINUFFT is divided into 3 parts: finufft1d1, finufft1d2 and finufft1d3. They are
+FINUFFT is divided into three parts: finufft1d1, finufft1d2 and finufft1d3. They are
 used to solve signals which are non-uniform in time domain, frequency domain and
 both.
 
@@ -498,22 +410,22 @@ set(gca, 'FontSize', 12);
 sgtitle('FINUFFT vs FFT', 'FontSize', 16, 'FontWeight', 'bold');
 \end{lstlisting}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.2 Non Uniform Fourier Transform/FINUFFT
   vs FFT.png}
   \caption{FINUFFT vs FFT}
 \end{figure}
 
-\subsection{\textbf{Discrete Cosine Transform}}
+\section{Discrete Cosine Transform}
 
-\subsubsection{\textbf{Introduction}}
+\subsection{Introduction}
 
 Do you think such a question: Nature doesn't have many complex signals, most of the signals
 are real. So why we use FT and create a complex basis function $e^{-j\omega t}$? Why not
 just use cosine? Well this is what \textbf{Discrete Cosine Transform (DCT)} do.
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 DCT is a twice long DFT which for real even functions. Assume we have a right-side signal
 $x(m)$, which is blue in the figure below. and we fold it back to the left side, which Is
@@ -529,7 +441,7 @@ the red part:
 Now the new signal is not even, it has x=-0.5 as its symmetry axis. So we move it 0.5 to
 the right, now it's even:
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.3 Discrete Cosine Transform/DCT
   Process 2.png}
@@ -575,21 +487,21 @@ More than that, like FFT, DCT also has a fast algorithm called \textbf{Fast DCT 
 with a time complexity of $O(NlogN)$. Its core is to break the DCT basis matrix into many
 smaller matrices to reduce the calculation complexity.
 
-\subsubsection{\textbf{Application}}
+\subsection{Application}
 
 DCT is widely used in image and audio compression, such as \textbf{JPEG} and \textbf{MP3}.
 It is especially effective for signals with a lot of low-frequency components, as it can
 represent these components with fewer coefficients.
 
 
-\subsection{\textbf{Short Time Fourier Transform}}
+\section{Short Time Fourier Transform}
 
-\subsubsection{\textbf{Introduction}}
+\subsection{Introduction}
 
 Till now all we talked is in FT's field. FT is good, but not that good. It's a blind
-method that can't tell us the time information of the signal. Here's an proper example:
+method that can't tell us the time information of the signal. Here's a proper example:
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.4 Short Time Fourier Transform/FT's
   disadvantage.png}
@@ -600,13 +512,13 @@ If the blue signal is F1, the red one is F2, then F2 is the reverse of F1. But t
 FTs are the same. It shows that FT can only find the frequency weight but can't tell
 where the weight is.
 
-It's also simple to solve this problem. Just divide the signal into 2 parts, the previous
+It's also simple to solve this problem. Just divide the signal into two parts, the previous
 second and the next second, do FT on both parts, and then we can get the time information.
 
 This is called split by window in STFT. So there is a new concept called
 \textbf{window function}.
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 STFT uses a window function to divide the signal into some parts, and then do FT on
 each part. The core of STFT is to change the basis function to $e^{-j\omega t}y_{window}(t)$.
@@ -615,7 +527,7 @@ There are so many window functions, the most colorful one is the gate function $
 (This is also called Gabor Transform). All window functions are compact supported, which
 means that they are non-zero only in a finite interval.
 
-\subsubsection{\textbf{Process}}
+\subsection{Process}
 
 We set the window function as $g_{0.5}(t)$ and $t_s$ is the time shift of it. Here's the
 result of STFT:
@@ -731,7 +643,7 @@ legend('0s', '0.5s', '1s', '1.5s', 'Location', 'northeast')
 sgtitle('STFT', 'FontSize', 16, 'FontWeight', 'bold')
 \end{lstlisting}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.4 Short Time Fourier Transform/STFT
   Example.png}
@@ -741,9 +653,9 @@ sgtitle('STFT', 'FontSize', 16, 'FontWeight', 'bold')
 STFT can distinguish the time information of the signal, every 0.5 seconds. When facing
 more complex signals, we can use smaller window size to get more detailed time information.
 
-\subsection{\textbf{Continuous Wavelet Transform}}
+\section{Continuous Wavelet Transform}
 
-\subsubsection{\textbf{Introduction}}
+\subsection{Introduction}
 
 Heisenberg Uncertainty Principle tells us that we can't get the time and frequency
 information of a signal at the same time. The resolution of time and frequency domain
@@ -761,14 +673,14 @@ function.
 
 This is the \textbf{wavelet mother function}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.5 Continuous Wavelet Transform/Wavelet
   mother function.png}
   \caption{Wavelet mother function}
 \end{figure}
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 Wavelet mother function is not a single function, but a family of functions. There are
 4 conditions for a wavelet mother function:
@@ -802,19 +714,19 @@ a high frequency resolution. This is exactly what we want.
 And Continuous Wavelet Transform (CWT) is similar to FT, which it just changes the basis
 function to $\psi^*(\tau,s)$.
 
-\subsubsection{\textbf{Process}}
+\subsection{Process}
 
 See these 2 figures$^{[1]}$. The yellow signal is the original signal, the blue one is the wavelet
 function. Figure 1 chooses a small $s$ to filter the high frequency part and figure 2
 chooses a large $s$ to filter the low frequency part. This is the idea of CWT.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.75\textwidth]{assets/1.5 Continuous Wavelet Transform/CWT
   Example 1.png}
   \caption{From: THE WAVELET TUTORIAL, Robi Polikar}
 \end{figure}
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.75\textwidth]{assets/1.5 Continuous Wavelet Transform/CWT
   Example 2.png}
@@ -832,19 +744,19 @@ In the end, there are many wavelet mother functions, such as Haar wavelet, Daube
 wavelet and so on. Use what kind of wavelet mother function depends on the signal
 you want to process. It is always beneficial to refer to others' materials.
 
-\subsection{\textbf{Discrete Wavelet Transform}}
+\section{Discrete Wavelet Transform}
 
-\subsubsection{\textbf{Introduction}}
+\subsection{Introduction}
 
 CWT solves the problem of STFT. However, CWT can only process continuous signals.
 Like CTFT changes to DFT, CWT also has a discrete version, which is called DWT.
 This is according to computer's discreteness and finiteness.
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 Mallat created a new algorithm to process DWT, which is called \textbf{Mallat Algorithm}.
 The core of Mallat Algorithm is to use a pair of low-pass filter and high-pass filter
-to decompose the signal into 2 parts: low frequency part and high frequency part.
+to decompose the signal into two parts: low frequency part and high frequency part.
 
 Let the original signal pass through a LPF $h[n]$ and a HPF $g[n]$, if the highest
 frequency of the signal is $\pi$, then the highest part(high frequency coefficient) is
@@ -865,14 +777,14 @@ Subsampling makes time resolution worse, but frequency resolution better. So we 
 result, variable resolution.
 
 Here's the process$^{[1]}$ of Mallat Algorithm:
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=1\textwidth]{assets/1.6 Discrete Wavelet Transform/Mallat
   Algorithm.png}
   \caption{From: THE WAVELET TUTORIAL, Robi Polikar}
 \end{figure}
 
-\subsubsection{\textbf{Example}}
+\subsection{Example}
 
 \begin{lstlisting}[language=Matlab]
 %% DWT_example
@@ -966,7 +878,7 @@ title('Reconstructed Signal');
 sgtitle('DWT', 'FontSize', 12);
 \end{lstlisting}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.6 Discrete Wavelet Transform/DWT
   Example.png}
@@ -977,14 +889,14 @@ Approximation factor is the low frequency coefficient and detail factor is the h
 coefficient. Only D3 and D4 need to be retained, as the frequency components of the signal
 are 50Hz and 100Hz. The error is extremely small, which shows the good performance of DWT.
 
-\subsection{\textbf{Continuous Curvelet Transform$^{[7]}$}}
-\subsubsection{\textbf{Introduction}}
+\section{Continuous Curvelet Transform$^{[7]}$}
+\subsection{Introduction}
 
 Similar to the Wavelet Transform, the Curvelet Transform is designed to represent data
 with edges more effectively. It captures the directional information of curves in images,
 making it particularly useful for image processing tasks.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/1.7 Continuous Curvelet Transform/WT and CT.png}
   \caption{WT (left) and CT (right) $^{[8]}$}
@@ -996,10 +908,10 @@ while curvelets excel at capturing curved edges. This makes curvelets particular
 for tasks involving images with complex structures and shapes.
 
 The first generation of curvelets was constructed on the basis of the ridgelet transform.
-However, too complex to implement so the second generation came out. Nowadays all we uses
+However, too complex to implement so the second generation came out. Nowadays all we use
 is the second generation.
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 Suppose in $R^2$, $x$ is the position parameter, $\omega$ is the frequency parameter,
 $r, \theta$ are the polar coordinates. And there is $W(r), V(t)$ obeys:
@@ -1014,7 +926,7 @@ For any $j \geq j_0$, define:
 \]
 
 $[\frac{j}{2}]$ means rounding down. The whole formula describes a wedge-shaped window:
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.6\textwidth]{assets/1.7 Continuous Curvelet Transform/Curvelet
   tiling of frequency.png}
@@ -1052,8 +964,8 @@ Also according to Plancherel's theorem, we have such formula in frequency domain
   c_{j, k, l} = \frac{1}{(2\pi)^2} \int \hat{f}(\omega) \hat{\phi}_{j, k, l}(\omega) \, d\omega
 \]
 
-\subsection{\textbf{Discrete Curvelet Transform}}
-\subsubsection{\textbf{Definition}}
+\section{Discrete Curvelet Transform}
+\subsection{Definition}
 
 Just like the definition of the continuous curvelet transform, we define radius window
 and angle window in Cartesian coordinates as:
@@ -1079,7 +991,7 @@ Now the Cartesian window can be described as:
 \]
 
 Here is what it looks like in Cartesian coordinates:
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{assets/1.8 Discrete Curvelet Transform/Curvelet
   tiling of frequency.png}
@@ -1092,7 +1004,7 @@ After a complex process (It wasn't given in paper actually :<), we can get the c
   \omega \rangle} \, d\omega
 \]
 
-\subsubsection{\textbf{Fast Discrete Curvelet Transform}}
+\subsection{Fast Discrete Curvelet Transform}
 
 Candès and others created a fast algorithm to compute the discrete curvelet transform,
 which is called \textbf{Fast Discrete Curvelet Transform (FDCT)}.
@@ -1121,22 +1033,28 @@ repeat some key files of 2d MATLAB warpping version:
   using curvelets.
 \end{itemize}
 
-\newpage
-\thispagestyle{empty}
-\begin{center}
-    \vspace*{96pt}
-    \fontsize{60}{60}\customfont{2}\par
-    \fontsize{26}{31.2}\section{\textbf{Basic Concepts}}\par % 标题
-    \vspace{25pt}
-    \fontsize{18}{21.6}\customfont{\textit{Information is the resolution of uncertainty.
-    --- Cluade Shannon}}\par % 名言
-    \vfill
-\end{center}
+\chapter{Basic Concepts}
 
-\newpage
-\subsection{\textbf{Sparsity}}
+\subsection*{Overview}
 
-\subsubsection{\textbf{Definition}}
+Chapter 1 gave us the transforms, and this chapter gives us the vocabulary to describe what
+they produce. Three ideas carry most of the weight: sparsity, norms, and convex
+optimization. If those are clear, the theory in Chapter 3 will read easily.
+
+Sparsity is the property the whole field exploits, and it is defined by counting non-zero
+entries in some basis. Norms give a way to measure size, and the chapter works through the
+important ones, including why the $l_1$ norm behaves so differently from the $l_0$ "norm".
+Convex optimization is the machinery that turns a sparse-recovery idea into something
+solvable.
+
+The rest of the chapter is applied: the projection matrix for building a measurement
+system, and image quality assessment and BayesShrink for judging how good a reconstruction
+is, both of which the later chapters rely on.
+
+
+\section{Sparsity}
+
+\subsection{Definition}
 
 As we all know, Compressed Sensing is a typical problem of Machine Learning. So we need
 to understand what sparsity is before starting.
@@ -1159,10 +1077,10 @@ such a formula:
   y = D\alpha \quad s.t. \quad ||\alpha||_0 < \sigma.
 \]
 
-Every signal can be sparsity represented by a overcomplete dictionary. $s.t.$ is subject to.
+Every signal can be sparsity represented by an overcomplete dictionary. $s.t.$ is subject to.
 
 
-\subsubsection{\textbf{Application}}
+\subsection{Application}
 
 If we have a 1KB signal, we storage it in a $ 32 \times 32$ matrix. According to the sparsity
 property of the signal, we can use a local $32 \times 64$ dictionary $D$ and a $64 \times
@@ -1174,9 +1092,9 @@ COO, and matrix can be smaller if you choose Compressed Sparse Row, CSR). In the
 need to send 0.6KB to the receiver, which is much smaller than the original 1KB signal. Then
 the receiver can reconstruct the signal by $\alpha$ and $D$.
 
-\subsection{\textbf{Norm}}
+\section{Norm}
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 In mathematics, we often define a norm as a function that measures the size of a vector.
 The $l_p$-norm of a vector $x$ is:
@@ -1215,7 +1133,7 @@ There is also a $l_{\infty}$-norm, which is defined as:
 $l_{\infty}$-norm is the maximum absolute value of the elements in the vector.It's widely
 used in image processing.
 
-\subsubsection{\textbf{Overfitting and $l_1$-norm sparsity}}
+\subsection{Overfitting and $l_1$-norm sparsity}
 
 In machine learning, if the train set is too small, the model may fit the noise
 in the train set, which is called \textbf{overfitting}. This means that the model
@@ -1225,13 +1143,13 @@ the $l_1$-norm and we can get a sparse solution, and avoid overfitting.
 
 Here's an example$^{[2]}$ to understand why sparsity solves the overfitting problem.
 
-\begin{mdquote}
+\begin{note}
 Suppose you are the king of a kingdom that has a large population and an OK overall GDP,
 but the per capita is very low. Each one of your citizens is lazy and unproductive and
 you are mad. Therefore you command “be productive, strong and hard working, or you die!”
 And you enforce the same GDP as before. As a result, many people died due to your harshness,
 those who survived your tyranny became really capable and productive.
-\end{mdquote}
+\end{note}
 
 The population is vector x, the command is the $l_1$-norm regularization term, and the
 result is the sparse solution. The $l_1$-norm regularization term forces the model to
@@ -1240,7 +1158,7 @@ be sparse, which means those useless people die. Now everyone is productive.
 But, why $l_1$-norm regularization term can make the model sparse? First we need to
 understand what is look like$^{[3]}$ of $l_p$-norm in 2D space.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.6\textwidth]{assets/2.2 Norm/Lp-Norm in 2D space.png}
   \caption{$l_p$-norm in 2D space}
@@ -1252,15 +1170,15 @@ is a funtion, there are countless points on the function, once intersecting with
 points of $l_1$-norm, $l_1$-norm determines the sparse solution on the function. So that's
 why $l_1$-norm proves sparsity.
 
-\subsection{\textbf{Convex Optimization}}
+\section{Convex Optimization}
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 For arbitrary $x, y$ and $\mu \in [0, 1]$, then $\mu x + (1-\mu)y$ means all points
 on the line segment between $x$ and $y$. If $x, y$ are in a set $C$ and $\mu x + (1-\mu)y$
 is also in $C$, then $C$ is called a \textbf{convex set}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.4\textwidth]{assets/2.3 Convex Optimization/Not Convex Set.png}
   \caption{Not Convex Set}
@@ -1273,13 +1191,13 @@ $x_1, x_2$ in the domain, the following inequality holds $f(\mu x_1 + (1-\mu)x_2
 
 If the inequality is strict, then $f$ is called a \textbf{strictly convex function}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.4\textwidth]{assets/2.3 Convex Optimization/Convex Function.png}
   \caption{Convex Function}
 \end{figure}
 
-If we have such a optimization problem
+If we have such an optimization problem
 \[
   \min_{x} f(x)
   \quad\text{s.t.}\quad
@@ -1288,7 +1206,7 @@ If we have such a optimization problem
 and$f(x), g_i(x)$ are all convex functions, then this is called a \textbf{convex
 optimization problem}.
 
-\subsubsection{\textbf{What's the usage?}}
+\subsection{What's the usage?}
 
 If a problem can be represented as a convex optimization problem, then it can be solved
 much easier. This is because we have many algorithms to solve convex optimization problems.
@@ -1301,16 +1219,16 @@ For convex optimization problems, local optimal solution is also the global opti
 This is because the convex function has no local minimum, which means that the local minimum
 is also the global minimum. This is a very important property of convex optimization.
 
-\subsection{\textbf{Projection Matrix}}
+\section{Projection Matrix}
 
-\subsubsection{\textbf{Introdution}}
+\subsection{Introduction}
 
 If you have learned Prof.Liu's Linear Algebra, you must have watched Prof. Gilbert Strang's
 video about Linear Algebra. In this section we will talk about the projection matrix in
 his 16th lecture.
 
 If there are 3 points, (1, 1), (2, 2) and (3, 2), and we want to find a line to fit these
-points, then we get a equation:
+points, then we get an equation:
 \[
   \begin{array}{c@{\;\;}c@{\;\;}c@{\;\;}c}
     \begin{bmatrix}1 & 1 \\ 1 & 2 \\ 1 & 3\end{bmatrix}
@@ -1328,7 +1246,7 @@ to find the best solution:
 
 And this introduces \textbf{projection matrix}.
 
-\subsubsection{\textbf{Definition}}
+\subsection{Definition}
 
 Actually, solve x is a process that use the linear combination of the column vectors of $A$
 to approximate $b$. We set a vector $p$ which is the most close to $b$ and is in the
@@ -1342,7 +1260,7 @@ We set $\hat{x}$ is the solution of the least squares method, then we have:
 
 The matrix $P = A(A^TA)^{-1}A^T$ is called the \textbf{projection matrix}.
 
-\subsubsection{\textbf{Properties}}
+\subsection{Properties}
 
 Projection matrices have several important properties:
 
@@ -1354,7 +1272,7 @@ Projection matrices have several important properties:
   \item If $A = Q R$ is a full QR factorization with $Q^T Q = I$, then $P = Q Q^T$.
 \end{itemize}
 
-\subsubsection{\textbf{Murmurs}}
+\subsection{Murmurs}
 
 When I was writing this section, I realized that I had forgotten most of the knowledge about
 Linear Algebra. I had to quick review it before I wrote almost everything. Study is a
@@ -1363,8 +1281,8 @@ regularly, not only the required courses but also things like this tutorial. Wel
 subsection, we will go into the most important part, \textbf{Compressed Sensing}. Hope you
 can understand it well.
 
-\subsection{\textbf{Image Quality Assessment (IQA)}}
-\subsubsection{\textbf{MSE and PSNR}}
+\section{Image Quality Assessment (IQA)}
+\subsection{MSE and PSNR}
 
 \textbf{Mean Squared Error (MSE)} is a basic metric for evaluating image quality. It
 measures the average squared difference between the original image and the distorted
@@ -1401,7 +1319,7 @@ and ease of calculation. They provide a basic quantitative measure of image qual
 more comprehensive assessments, other metrics such as Structural Similarity Index (SSIM) are
 often used.
 
-\subsubsection{\textbf{SSIM}}
+\subsection{SSIM}
 
 SSIM is an advanced metric, which is designed to better align with human visual perception.
 It considers three key aspects of image quality: luminance, contrast, and structure.
@@ -1450,8 +1368,8 @@ SSIM calculates a window (usually $11 \times 11$) to slide over the image, and
 computes the SSIM index for each window. The final SSIM index for the entire image
 is obtained by averaging the SSIM values of all windows.
 
-\subsection{\textbf{BayesShrink}}
-\subsubsection{\textbf{Introduction}}
+\section{BayesShrink}
+\subsection{Introduction}
 
 To denoise a signal, we can use wavelet transform to transform the signal to wavelet
 domain, then use a threshold to shrink the wavelet coefficients, and finally use inverse
@@ -1489,7 +1407,7 @@ where $\sigma$ is the noise level and $n$ is the number of wavelet coefficients.
 However, this threshold is not adaptive to the signal, and may lead to problems. So that's
 why \textbf{BayesShrink} comes out.
 
-\subsubsection{\textbf{BayesShrink}}
+\subsection{BayesShrink}
 
 The basic model of BayesShrink is:
 \[
@@ -1547,39 +1465,44 @@ Moreover, if the standard deviation of the noise is known (Usually happens when 
 noise is added to the signal), we can directly use its square as the noise variance
 $\sigma^2$.
 
-\newpage
-\thispagestyle{empty}
-\begin{center}
-    \vspace*{96pt}
-    \fontsize{60}{60}\customfont{3}\par
-    \fontsize{26}{31.2}\section{\textbf{Compressed Sensing}}\par % 标题
-    \vspace{25pt}
-    \fontsize{18}{21.6}\customfont{\textit{Ultimately you should follow advice not because
-    someone tells you to, but because it was something that you already knew you should be
-    doing. --- Terence Tao}}\par % 名言
-    \vfill
-\end{center}
+\chapter{Compressed Sensing}
 
-\newpage
-\subsection{\textbf{What is Compressed Sensing?}}
+\subsection*{Overview}
 
-\subsubsection{\textbf{Theoretical Framework}}
+Now the theory itself, and the question is simple to state: if a signal is sparse in some
+basis, how few measurements do we need in order to recover it exactly? The Nyquist rate is
+the classical answer for band-limited signals, and compressed sensing shows that sparsity
+buys us far more.
 
-Assume we have a $N$ long signal $X$, and $X$ can be sparsely represented by a orthogonal
-basis $\Psi$, and we use a observation matrix $\Phi$ which is unrelated to $\Psi$, then We
-get a observation signal $Y$, then reconstruct original signal $X$.
+We start with the definition and the recovery condition. The restricted isometry property
+is the key hypothesis, hard to verify but easy to reason about, and the chapter then covers
+the observation matrices that satisfy it in practice, including random Gaussian and
+Bernoulli matrices.
 
-First, calculate the transformation factor $\Theta = \Psi^T$. Secondly, design a observation
+The last section is the algorithms. Greedy pursuit methods recover the signal one
+coefficient at a time, starting with orthogonal matching pursuit and moving on to CoSaMP
+and SAMP, which correct earlier mistakes and need less prior knowledge.
+
+
+\section{What is Compressed Sensing?}
+
+\subsection{Theoretical Framework}
+
+Assume we have a $N$ long signal $X$, and $X$ can be sparsely represented by an orthogonal
+basis $\Psi$, and we use an observation matrix $\Phi$ which is unrelated to $\Psi$, then We
+get an observation signal $Y$, then reconstruct original signal $X$.
+
+First, calculate the transformation factor $\Theta = \Psi^T$. Secondly, design an observation
 matrix $\Phi$, then the observation signal $Y = \Psi \Theta = \Theta \Psi^T X$. Finally
 this problem becomes a $l_0$-norm minimization problem:
 \[
 \min ||\Psi^T X||_0 \quad s.t. \quad Y = \Phi \Psi^T X.
 \]
 
-Compressed Sensing mainly includes 3 parts: signal's sparsity representation, observation
+Compressed Sensing mainly includes three parts: signal's sparsity representation, observation
 matrix design (also signal's low-speed sampling) and signal reconstruction.
 
-\subsubsection{\textbf{Signal's Sparsity Representation}}
+\subsection{Signal's Sparsity Representation}
 
 Under normal circumstances, we should choose specific basis $\Psi$, here is a table:
 
@@ -1600,12 +1523,12 @@ Under normal circumstances, we should choose specific basis $\Psi$, here is a ta
   \caption*{Common bases for different application scenarios}
 \end{table}
 
-\subsubsection{\textbf{Observation Matrix Design}}
+\subsection{Observation Matrix Design}
 
 The core property of the observation matrix $\Phi$ is \textbf{Restrict Isometry (RIP)}.
 RIP means that $\Phi$ can preserve the distance between the sparse signal and its
 observation. In other words, $\Phi$ can ensure that the sparse signal can be reconstructed
-from its observation. However, the RIP is very hard to satisfy, and there's a equivalent
+from its observation. However, the RIP is very hard to satisfy, and there's an equivalent
 conditions$^{[4]}$ for RIP: \textbf{Incorrectness between the observation matrix $\Phi$ and
 the basis $\Psi$}. For most cases, \textbf{random Gaussian matrix} can satisfy this
 condition. There are also some other matrices, we will show them soon.
@@ -1613,18 +1536,18 @@ condition. There are also some other matrices, we will show them soon.
 Here's a figure to show Compressed Sensing$^{[5]}$, the observation matrix $\Phi$ is a
 random Gaussian matrix, the basis $\Psi$ is a DCT basis.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.95\textwidth]{assets/3.1 What is Compressed Sensing/Compressed
   Sensing.png}
   \caption{Compressed Sensing}
 \end{figure}
 
-\subsubsection{\textbf{Signal Reconstruction}}
+\subsection{Signal Reconstruction}
 
 We have talked that Compressed Sensing can be transformed to a $l_1$-norm minimization
 problem, and this is a convex optimization problem ($l_1$-norm is convex and the equation
-is also convex). There are 3 kinds of methods to solve this problem: \textbf{Convex Relaxation
+is also convex). There are three kinds of methods to solve this problem: \textbf{Convex Relaxation
 Method}, \textbf{Greedy Pursuit Method} and \textbf{Iterative Thresholding Method}.
 
 The typical representative of convex relaxation method is \textbf{Basic Pursuit (BP)},
@@ -1635,9 +1558,9 @@ Iterative thresholding method is \textbf{Iterative Hard Thresholding (IHT)} and
 disadvantages, and the choice of algorithm depends on the specific application scenario.
 We will discuss greedy pursuit method in this tutorial.
 
-\subsection{\textbf{Common Observation Matrices}}
+\section{Common Observation Matrices}
 
-\subsubsection{\textbf{Random Gaussian Matrix}}
+\subsection{Random Gaussian Matrix}
 
 Random Guassian Matrix is the most commonly used observation matrix in Compressed Sensing.
 Make a $M \times N$ matrix $\Phi$, and every elements obey Gaussian distribution
@@ -1656,7 +1579,7 @@ Here's a simple example in MATLAB:
 Phi = randn(M, N) / sqrt(M);
 \end{lstlisting}
 
-\subsubsection{\textbf{Random Bernoulli Matrix}}
+\subsection{Random Bernoulli Matrix}
 
 Random Bernoulli Matrix is a special case of random Gaussian matrix. It is a $M \times N$
 matrix, and every elements obey Bernoulli distribution:
@@ -1686,9 +1609,9 @@ Phi(Phi == 0) = -1;
 Phi = Phi / sqrt(M);
 \end{lstlisting}
 
-\subsubsection{\textbf{Sparse Random Measurement Matrix}}
+\subsection{Sparse Random Measurement Matrix}
 
-Make a all-zero $M \times N (M < N)$ matrix $\Phi$, randomly choose $d (d < M)$ positions in each
+Make an all-zero $M \times N (M < N)$ matrix $\Phi$, randomly choose $d (d < M)$ positions in each
 columns and set them to 1. There isn't much difference when $d = \{4, 8, 10, 16\}$. This matrix
 is also easy to storage.
 
@@ -1703,7 +1626,7 @@ for i = 1:N
 end
 \end{lstlisting}
 
-\subsubsection{\textbf{Toeplitz Matrix}}
+\subsection{Toeplitz Matrix}
 
 We define a Toeplitz matrix as:
 \[
@@ -1732,9 +1655,9 @@ Phi = toeplitz(u(N:end), fliplr(u(1:N)));
 Phi = Phi(1:M, :);
 \end{lstlisting}
 
-\subsection{\textbf{Greedy Pursuit Method}}
+\section{Greedy Pursuit Method}
 
-\subsubsection{\textbf{Introduction}}
+\subsection{Introduction}
 
 When $A$ and $x$ are known, it's easy to solve $y = Ax$. But if $A$ and $y$ is known,
 how to calculate $x$?
@@ -1749,7 +1672,7 @@ pursuit algorithm, In this section, we will introduce OMP and its variants.
 
 \subsubsection[\textbf{Examples}]{\textbf{Examples}\textsuperscript{[6]}}
 
-\paragraph{\textbf{Example 1}}\mbox{}\\
+\subsubsection{Example 1}
 \[
   y = \begin{bmatrix} 1.65 \\ -0.25 \end{bmatrix}, \quad
   A = \begin{bmatrix} -0.707 & 0.8 & 0 \\ 0.707 & 0.6 & -1 \end{bmatrix}
@@ -1807,7 +1730,7 @@ Upon completing this, we have $x_{rec} = \begin{bmatrix} -1.2 \\ 1 \\ 0 \end{bma
 now $r = y - A_{new} \cdot \lambda = \begin{bmatrix} 0 \\ 0 \end{bmatrix}$.  This is the
 answer.
 
-\paragraph{\textbf{Example 2}}\mbox{}\\
+\subsubsection{Example 2}
 \[
   y = \begin{bmatrix} 2.7 \\ 0.1 \\ 4.5\end{bmatrix}, \quad 
   A = \begin{bmatrix} -0.8 & 0.3 & 1 & 0.4 \\ -0.2 & 0.4 & -0.3 & -0.4 \\
@@ -1844,7 +1767,7 @@ Repeat this process, we get the final result:
   x_{rec} = \begin{bmatrix} 0 \\ 3 \\ 1 \\ 2 \end{bmatrix}
 \]
 
-\subsubsection{\textbf{Summrize}}
+\subsection{Summrize}
 
 Sometimes the sparsity level $K$ is known, which means we know how many atoms we need
 to choose. In this case, we can stop after $K$ iterations.
@@ -1865,28 +1788,28 @@ Orthogonalization}, then subtract the orthogonalized components from the signal 
 decomposed to obtain the residual. More about Gram-Schmidt Orthogonalization
 can be found in Prof.Strang's Linear Algebra course.
 
-\subsubsection{\textbf{Variants}}
+\subsection{Variants}
 
-\paragraph{\textbf{Compressive Sampling Matching Pursuit (CoSaMP)}}\mbox{}\\
+\subsubsection{Compressive Sampling Matching Pursuit (CoSaMP)}
 OMP choose 1 atom which has the largest contribution each time, but CoSaMP choose
 $2K$ atoms, then cut the support set $A$ to $K$ atoms. This makes CoSaMP more
 efficient than OMP, especially when the number of atoms is large (or longer
 signal with noisy).
 
-\paragraph{\textbf{Subspace Pursuit (SP)}}\mbox{}\\
+\subsubsection{Subspace Pursuit (SP)}
 SP is a variant of CoSaMP, it chooses $K$ atoms each time. Its accuracy and complexity
 are between CoSaMP and BP (however, I can't produce a high accuracy result with BP no
 matter what toolbox I tried, that's wierd).
 
-\paragraph{\textbf{Sparsity Adaptive Matching Pursuit (SAMP)}}\mbox{}\\
+\subsubsection{Sparsity Adaptive Matching Pursuit (SAMP)}
 SAMP is distinguished from OMP and CoSaMP because it is sparsity adaptived. It
 uses a step $S$ to adaptive the sparsity level. At the first time, let $L = S$,
 choose $L$ atoms, and cut the support set to $L$ atom each iterations. If the
 residual stops decreasing, then let $L = L + S$. Fianally $L \approx K$.
 
-\subsubsection{\textbf{MATLAB Example}}
+\subsection{MATLAB Example}
 
-\paragraph{\textbf{OMP}}
+\subsubsection{OMP}
 \begin{lstlisting}[language=Matlab]
 %% OMP_example
 clear; clc; close all;
@@ -2080,7 +2003,7 @@ OMP iterations: 33
 Relative reconstruction error: 0.2097
 \end{verbatim}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{assets/3.3 Greedy Pursuit Method/MATLAB OMP
   Example.png}
@@ -2088,7 +2011,7 @@ Relative reconstruction error: 0.2097
 \end{figure}
 
 \newpage
-\paragraph{\textbf{CoSaMP}}
+\subsubsection{CoSaMP}
 \begin{lstlisting}[language=Matlab]
 %% CoSaMP_example
 clear; clc; close all;
@@ -2247,7 +2170,7 @@ CoSaMP iterations: 10
 Relative reconstruction error: 0.1074
 \end{verbatim}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{assets/3.3 Greedy Pursuit Method/MATLAB CoSaMP
   Example.png}
@@ -2257,7 +2180,7 @@ Relative reconstruction error: 0.1074
 That's crazy that CoSaMP can reconstruct the signal with only 2.8\% observations and
 90\% precision. 
 
-\paragraph{\textbf{SAMP}}
+\subsubsection{SAMP}
 \begin{lstlisting}[language=Matlab]
 %% SAMP_example
 clear; clc; close all;
@@ -2445,7 +2368,7 @@ Total iterations: 22
 Relative reconstruction error: 0.1082
 \end{verbatim}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.8\textwidth]{assets/3.3 Greedy Pursuit Method/MATLAB SAMP
   Example.png}
@@ -2457,22 +2380,25 @@ is accurate as CoSaMP and don't have to give the sparsity level $K$ in advance. 
 is a critical point for engineering applications, because we don't know how many
 atoms we need to choose in most cases.
 
-\newpage
-\thispagestyle{empty}
-\begin{center}
-    \vspace*{96pt}
-    \fontsize{60}{60}\customfont{4}\par
-    \fontsize{26}{31.2}\section{\textbf{Image processing}}\par % 标题
-    \vspace{25pt}
-    \fontsize{18}{21.6}\customfont{\textit{Ultimately you should follow advice not because
-    someone tells you to, but because it was something that you already knew you should be
-    doing. --- Terence Tao}}\par % 名言
-    \vfill
-\end{center}
+\chapter{Image processing}
 
-\newpage
-\subsection{\textbf{TV Regularization}}
-\subsubsection{\textbf{Definition}}
+\subsection*{Overview}
+
+This chapter applies everything to images. An image is a large signal and it is rarely
+sparse in the Fourier sense, so the transforms from Chapter 1 earn their keep here.
+
+Total variation regularization is the workhorse: instead of penalising the number of
+non-zero pixels, it penalises how much the image changes from one pixel to the next, which
+preserves edges that a sparsity penalty would smear. The section develops the idea and
+shows how it fits the reconstruction framework.
+
+Solving these problems needs a different kind of algorithm. Alternating Direction Method of
+Multipliers splits a hard problem into two easier subproblems and alternates between them,
+and the chapter ends with that method applied to total variation.
+
+
+\section{TV Regularization}
+\subsection{Definition}
 
 Denoising is a common problem in signal processing. And Total Variation (TV)
 regularization is a powerful method for denoising, especially for images. The basic
@@ -2492,7 +2418,7 @@ It calculates the $l_2$-norm of the gradient at each pixel, then sums them up. A
 it is isotropic, which means it treats all directions equally. This makes TV
 regularization won't be biased by different images.
 
-\subsubsection{\textbf{ROF Model and Chambolle Algorithm}}
+\subsection{ROF Model and Chambolle Algorithm}
 
 Rudin et al. proposed the following model for image denoising:
 \[
@@ -2539,7 +2465,7 @@ And we can solve ROF model by interation:
 Chambolle proved that when $\tau \leq \frac14$, the algorithm converges to the
 solution. So the $\tau$ is usually set to 0.25.
 
-\subsubsection{\textbf{Fast Gradient Projection (FGP)}}
+\subsection{Fast Gradient Projection (FGP)}
 
 Chambolle's algorithm is simple and effective, but it is not the fastest. Beck and
 Teboulle proposed a fast gradient projection (FGP) method to decrease the time
@@ -2571,7 +2497,7 @@ update $p$. The steps are:
 $\tau$ is still set to 0.25. FGP converges faster than Chambolle's algorithm,
 especially when high accuracy is required.
 
-\subsubsection{\textbf{Chambolle-Pock Algorithm}}
+\subsection{Chambolle-Pock Algorithm}
 
 Chambolle-Pock algorithm is a primal-dual algorithm for convex optimization
 problems. It is even much faster than FGP in practice. It can solve a wide range of
@@ -2669,7 +2595,7 @@ Most of the time we can set $\tau = \sigma = 0.2$ in practice, or $1/\sqrt{8}$
 for better convergence.
 
 
-\subsubsection{\textbf{MATLAB Example}}
+\subsection{MATLAB Example}
 
 This example uses FDCT and Chambolle algorithm.
 
@@ -2768,15 +2694,15 @@ subplot(1,3,3), imshow(x),       title('Reconstructed');
 xlabel(sprintf('PSNR = %.2f dB', curr_psnr), 'FontSize', 10);
 \end{lstlisting}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=1\textwidth]{assets/3.4 TV Regularization/FDCT
   and Chambolle.png}
   \caption{FDCT and Chambolle Algorithm Example}
 \end{figure}
 
-\subsection{\textbf{Alternating Direction Method of Multipliers (ADMM)}}
-\subsubsection{\textbf{Argumented Lagrangian Multiplier (ALM)}}
+\section{Alternating Direction Method of Multipliers (ADMM)}
+\subsection{Argumented Lagrangian Multiplier (ALM)}
 
 Let's start from a constrained optimization problem:
 \[
@@ -2833,7 +2759,7 @@ ALM directly uses $\rho$, which means higher numerical stability. However, $f(x)
 and $A$ will be quite complex in some cases, which makes step 2 hard to solve.
 This is where ADMM comes in.
 
-\subsubsection{\textbf{ADMM}}
+\subsection{ADMM}
 
 ADMM solves problems in the form of:
 \[
@@ -2877,8 +2803,10 @@ When facing a huge, complex and separable problem, ADMM is a good choice.
 For example, Compressed Sensing, TV regularization, distributed optimization, etc.
 
 \newpage
-\section*{\textbf{Afterword}}
-\addcontentsline{toc}{section}{Afterword}
+\chapter*{Afterword}
+\addcontentsline{toc}{chapter}{Afterword}
+
+\linespread{1.55}\selectfont
 
 This tutorial is hastily ended here. Some may ask why I didn't introduce more
 algorithms like BP or IHT or something, you may think that I am lazy or I even don't
@@ -2911,8 +2839,10 @@ So let's end here. Class is over, dismiss!
 \end{flushright}
 
 \newpage
-\section*{\textbf{References}}
-\addcontentsline{toc}{section}{References}
+\linespread{1.2}\selectfont
+
+\chapter*{References}
+\addcontentsline{toc}{chapter}{References}
 \begin{enumerate}[label={[\arabic*]}, leftmargin=0pt]
   \raggedright
   \item POLIKAR R. The Wavelet Tutorial [EB/OL]. Rowan University, (2006) [2025-07-19].
