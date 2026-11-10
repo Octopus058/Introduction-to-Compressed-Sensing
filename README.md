@@ -21,8 +21,6 @@ Only after that does it develop compressed sensing itself, along with the observ
 matrices that make recovery possible and the greedy algorithms that carry it out. The final
 chapter applies all of it to images.
 
-The Chinese name for the subject, 压缩感知, was coined by Professor Qionghai Dai of
-Tsinghua University.
 
 ## Who this is for
 
@@ -79,15 +77,16 @@ Closing thoughts, and the bibliography.
 
 ## Building the PDF
 
-You need a TeX distribution with XeLaTeX. A **full** TeX Live installation is required
-rather than a minimal one. The document class is bundled in this repository, so there is
-nothing extra to install. (Tested with TeX Live 2023.)
+You need a TeX distribution with LuaLaTeX. A **full** TeX Live installation is required
+rather than a minimal one. The `scrbook` class ships with TeX Live, so there is nothing
+extra to install. The Chinese entries in the reference list need `luatexja` and a CJK font.
+(Tested with TeX Live 2023.)
 
 ```bash
 latexmk
 ```
 
-A `.latexmkrc` is included, so `latexmk` selects XeLaTeX automatically and runs as many
+A `.latexmkrc` is included, so `latexmk` selects LuaLaTeX automatically and runs as many
 passes as the cross-references need.
 
 ```bash
