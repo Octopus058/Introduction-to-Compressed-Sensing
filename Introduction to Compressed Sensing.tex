@@ -1,45 +1,175 @@
-\documentclass[lang=en,color=blue,mode=fancy,titlestyle=hang]{elegantbook}
+\documentclass[10pt,a4paper,oneside,numbers=noenddot]{scrbook}
 
 % ---- Title Information ----
 \title{Introduction to Compressed Sensing}
 \author{Lancet Ross}
-\date{Oct 15th, 2026}
-\version{2.2}
-\extrainfo{``What we know is not much. What we do not know is immense. --- P. S. Laplace''}
+\date{Nov 10th, 2026}
+\newcommand*{\bookversion}{2.3}
+\newcommand*{\bookquote}{``What we know is not much. What we do not know is immense. --- P. S. Laplace''}
 
-\cover{assets/3.1 What is Compressed Sensing/Compressed Sensing.png}
+% ---- Fonts ----
+% Text in TeX Gyre Termes and maths in Computer Modern, the pairing the book already used.
+\usepackage{fontspec}
+\setmainfont{TeXGyreTermesX}
+\setsansfont{texgyreheros}
 
-% ---- Additional Packages ----
-\usepackage{amsmath}
-\usepackage{array}
+% ---- Page layout ----
+\usepackage[a4paper]{geometry}
+\geometry{margin=25.4mm}
+% One inch all round leaves a 159mm measure, and some paragraphs carry inline maths with no
+% breakpoint in them.
+% Allow slightly looser lines first, then a third pass with emergency stretch, rather than
+% push a formula into the margin.
+\tolerance=1000
+\setlength{\emergencystretch}{3em}
+\linespread{1.2}
+
+% ---- Packages ----
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
 \usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{mleftright}
+\mleftright
+\usepackage[
+  backend=biber,
+  style=numeric-comp
+]{biblatex}
+\addbibresource{refs.bib}
+\usepackage[headsepline]{scrlayer-scrpage}
+\usepackage[hidelinks]{hyperref}
+% scrbook, like book, sets \@afterindentfalse, so the first paragraph after a heading sits
+% flush with the margin while every later one is indented. These tutorials have always
+% indented it, so the package has to be named here or the look is lost the next time the
+% class is replaced.
+\usepackage{indentfirst}
+
+\usepackage{array}
 \usepackage{float}
 \usepackage{wrapfig}
 \usepackage{tabularx}
-\usepackage{graphicx}
-\usepackage{enumitem}
 \usepackage{listings}
-% Numbered captions are the house standard, so that \figref / \tabref resolve.
-% The former \captionsetup[figure]{labelformat=empty} suppressed the "Figure N:"
-% prefix and is deliberately not restored.
-% Table of contents: body size throughout, opened up with leading.
-\setlength{\cftbeforechapskip}{1.1em}
-\setlength{\cftbeforesecskip}{0.5em}
-\setlength{\cftbeforesubsecskip}{0.15em}
-\usepackage{xcolor}
 \usepackage{url}
 \usepackage{xurl}
-\usepackage{tikz}
+% xeCJK needs XeTeX; on LuaLaTeX the equivalent is luatexja, which hooks into
+% fontspec the same way. The body font stays the one set above.
+\usepackage{luatexja-fontspec}
+\setmainjfont{Microsoft YaHei}
 
-% ---- Fonts ----
-% The class loads ctex with fontset=none, so the CJK font must be set here.
-% The tutorial is English, but it names the Chinese term 压缩感知 and cites one
-% Chinese reference.
-\usepackage{xeCJK}
-\setCJKmainfont{Microsoft YaHei}
-\setmonofont{Courier New}
+% ---- Running heads ----
+% The section title sits above a thin rule on the right, the page number at the foot.
+\pagestyle{scrheadings}
+\clearpairofpagestyles
+\automark{section}
+\ohead{\headmark}
+\cfoot*{\pagemark}
+% The running head carries a section title on top of a rule, and the foot a page
+% number; both need more room than one baseline, which KOMA warns about when they do not get it.
+\setlength{\headheight}{30pt}
+\setlength{\footheight}{20pt}
+% Content runs short of the lower edge more often than a book with no floats would, and
+% flush bottom then stretches every page to the same depth.
+\raggedbottom
 
-% ---- Code listing style ----
+% ---- Spacing in the table of contents ----
+\RedeclareSectionCommand[tocbeforeskip=1.1em]{chapter}
+\RedeclareSectionCommand[tocbeforeskip=0.5em]{section}
+\RedeclareSectionCommand[tocbeforeskip=0.15em]{subsection}
+
+% ---- Math Operators ----
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator{\Vol}{Vol}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\tr}{tr}
+
+% ---- Cross-references ----
+\newcommand*{\figref}[1]{\textbf{Figure}~\ref{#1}}
+\newcommand*{\tabref}[1]{\textbf{Table}~\ref{#1}}
+
+% ---- Theorem-like environments, set the way Cover and Thomas set theirs ----
+% A run-in bold head, a full stop after the number, and nothing else around it.
+% Definitions, examples and remarks set their body roman; results set it italic, and carry
+% a very light grey panel so they can be found by flipping through the book.
+% A panel with no rule and no title bar: a very light grey fill that keeps the black-and-white
+% look while telling a result apart from the prose around it.
+\tcbset{
+  ctresult/.style={
+    breakable,
+    colback=black!4, colframe=black!4,
+    boxrule=0pt, arc=0pt, outer arc=0pt,
+    % The text inside the panel has to sit on the same left edge as the prose outside
+    % it, so the panel carries no side padding at all: it spans the measure exactly and
+    % the grey band reads as a highlighted paragraph. Vertical padding stays, because a
+    % band that clips the ascenders looks like a mistake.
+    boxsep=0pt, left=0pt, right=0pt, top=5pt, bottom=5pt,
+    before skip=0.9em, after skip=0.9em,
+  },
+}
+% amsthm's default end-of-proof mark is drawn from rules and never reaches the PDF text
+% layer. Use the open square the book has always used, which is a real glyph.
+\renewcommand*{\qedsymbol}{\(\Box\)}
+\newtheoremstyle{ctplain}{0.8em}{0.8em}{}{}{\bfseries}{.}{0.5em}{}
+\newtheoremstyle{ctresult}{0.8em}{0.8em}{\itshape}{}{\bfseries}{.}{0.5em}{}
+
+\theoremstyle{ctplain}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem*{remark}{Remark}
+
+\theoremstyle{ctresult}
+\newtheorem{ctheorem}{Theorem}[chapter]
+\newtheorem{clemma}{Lemma}[chapter]
+\newtheorem{ccorollary}{Corollary}[chapter]
+\newtheorem{cproposition}{Proposition}[chapter]
+\newtheorem*{note}{Note}
+
+\NewDocumentEnvironment{theorem}{o}
+  {\begin{tcolorbox}[ctresult]\IfNoValueTF{#1}{\begin{ctheorem}}{\begin{ctheorem}[#1]}}
+  {\end{ctheorem}\end{tcolorbox}}
+\NewDocumentEnvironment{lemma}{o}
+  {\begin{tcolorbox}[ctresult]\IfNoValueTF{#1}{\begin{clemma}}{\begin{clemma}[#1]}}
+  {\end{clemma}\end{tcolorbox}}
+\NewDocumentEnvironment{corollary}{o}
+  {\begin{tcolorbox}[ctresult]\IfNoValueTF{#1}{\begin{ccorollary}}{\begin{ccorollary}[#1]}}
+  {\end{ccorollary}\end{tcolorbox}}
+\NewDocumentEnvironment{proposition}{o}
+  {\begin{tcolorbox}[ctresult]\IfNoValueTF{#1}{\begin{cproposition}}{\begin{cproposition}[#1]}}
+  {\end{cproposition}\end{tcolorbox}}
+
+% ---- Title page ----
+\makeatletter
+\renewcommand*{\maketitle}{%
+  \begin{titlepage}
+    \hypersetup{pageanchor=false}
+    \centering
+    \null\vspace{5em}
+    {\Huge\bfseries \@title\par}
+    \vspace{1.5em}
+    {\large Version \bookversion\par}
+    \vspace{3em}
+    \rule{\textwidth}{0.4pt}\par
+    \vspace{1.2em}
+    {\itshape \bookquote\par}
+    \vspace{1.2em}
+    \rule{\textwidth}{0.4pt}\par
+    \vfill
+    {\large \@author\par}
+    \vspace{0.6em}
+    {\large \@date\par}
+    \vspace{2em}
+  \end{titlepage}
+}
+\makeatother
+
+% ---- Listings ----
 \lstset{
   language=Matlab,
   basicstyle=\small\ttfamily,
@@ -61,29 +191,26 @@
 \frontmatter
 \tableofcontents
 
-\mainmatter
-
+% ============================================================
 \chapter*{Preface}
 \addcontentsline{toc}{chapter}{Preface}
-
 \linespread{1.55}\selectfont
 
 Human beings have run into 21st century. The rapid development of information technology
 has greatly increased the amount of data we need. It's clear that the real world is analog
 and the digital world is discrete so that signal sampling is the necessary way to convert
-the real world into the digital one. \textbf{Shannon-Nyquist sampling theorem} tells us
+the real world into the digital one. \emph{Shannon-Nyquist sampling theorem} tells us
 that the sampling rate should be at least twice the maximum frequency of the signal to
 avoid aliasing, and this frequency is called the Nyquist frequency. However,
 Shannon-Nyquist sampling theorem is faced with a problem that us humans wants to decrease
 the cost of data sampling and storage. Is there a way to break through the
 Shannon-Nyquist sampling theorem and sample the signal at a lower rate? The answer is yes,
-and this is the \textbf{Compressed Sensing}.
+and this is the \emph{Compressed Sensing}.
 
-We often call Compressed Sensing as CS for short, and also Compressive Sampling. Its
-Chinese name is \textbf{压缩感知}, translated by Professor Qionghai Dai from Tsinghua
-University. Compressed Sensing is a new theory that can reconstruct the original signal
+We often call Compressed Sensing as CS for short, and also Compressive Sampling.
+Compressed Sensing is a new theory that can reconstruct the original signal
 from a small number of samples, which is much less than the Nyquist rate. For example, if
-we lost \textbf{70\%} of the samples, we can still reconstruct the original signal with a
+we lost \emph{70\%} of the samples, we can still reconstruct the original signal with a
 high probability. This is much unbelievable for us. Therefore someone said that Compressed
 Sensing is the most important discovery in information theory since Shannon-Nyquist
 sampling theorem.
@@ -93,7 +220,7 @@ transformation, and then some basic concepts like sparse representation and norm
 final part is Compressed Sensing theory, we will introduce its concept and some
 more like the observation matrices and the reconstruction algorithms. In this tutorial
 we will mainly introduce greedy algorithms. I strongly recommended that you should have learned Teacher
-Xue's \textbf{Signals and Systems} and \textbf{Linear Algebra} (no matter the teacher is 
+Xue's \emph{Signals and Systems} and \emph{Linear Algebra} (no matter the teacher is 
 Professor Liu or other teachers) before you start. 
 
 Well, I was learning CS and writing this tutorial at the same time. Just like my last Linux
@@ -108,7 +235,10 @@ Let's rock and roll!
   Jul 24th, 2025
 \end{flushright}
 
+
 \linespread{1.2}\selectfont
+
+\mainmatter
 
 \chapter{Signal Transformation}
 
@@ -183,20 +313,20 @@ period $N$}
 
 \textit{2. $x(n) = x_p(n)R_N(n) \quad R_N(n) = u(n) - u(n-N)$}
 
-\textbf{Time shifting} is that if $y(n) = x((n-m))_NR_N(n)$ (This is called Circular
+\emph{Time shifting} is that if $y(n) = x((n-m))_NR_N(n)$ (This is called Circular
 Shift m samples), then we have$Y(k) = W^{mk}X(k)$
 
-\textbf{Frequency shifting} is that if $Y(k) = X((k-l))_NR_N(k)$, then we have
+\emph{Frequency shifting} is that if $Y(k) = X((k-l))_NR_N(k)$, then we have
 $y(n) = W^{-nl}x(n)$
 
 \subsubsection{Circular Convolution}
-In \textbf{time} domain if $y(n) = x(n)h(n)$ then we have:
+In \emph{time} domain if $y(n) = x(n)h(n)$ then we have:
 \[
  Y(k) = \frac{1}{N}\sum_{n=0}^{N-1} X(l)H((k-l))_NR_N(k) = \frac{1}{N}\sum_{n=0}^{N-1}
 H(l)X((k-l))_NR_N(k).
 \]
 
-In \textbf{frequency} domain if $Y(k) = X(k)H(k)$ then we have:
+In \emph{frequency} domain if $Y(k) = X(k)H(k)$ then we have:
 \[
   y(n) = \sum_{n=0}^{N-1} x(m)h((n-m))_NR_N(n) = \sum_{n=0}^{N-1} h(m)x((n-m))_NR_N(n).
 \]
@@ -280,7 +410,7 @@ the size of interval and oversampling factor actually). Then use NUFFT.
 To interpolate sampling points, we introduce Kernel. Kernel is a function that
 describes the shape of the interpolation.
 
-\textbf{Gaussian Kernel} is a common kernel function, which is defined as:
+\emph{Gaussian Kernel} is a common kernel function, which is defined as:
 \[
   \phi(x) = e^{-\frac{x^2}{2\sigma^2}}.
 \]
@@ -288,7 +418,7 @@ describes the shape of the interpolation.
 $x$ is the distance from the sampling point to the grid point, and $\sigma$ is a width
 parameter. Gaussian Kernel is simple that its accuracy and complexity grow with $\sigma$.
 
-\textbf{Kaiser-Bessel Kernel (KB Kernel)} is another common kernel function, which is
+\emph{Kaiser-Bessel Kernel (KB Kernel)} is another common kernel function, which is
 defined as:
 \[
   \phi(x) =
@@ -315,7 +445,7 @@ weighted accumulate to grid points, oversample the grid points.
 \subsection{FINUFFT}
 
 Things we talked above are the basic concepts of NUFT. There are many libraries
-that can help us to do NUFT. For example the most famous one, \textbf{FINUFFT}.
+that can help us to do NUFT. For example the most famous one, \emph{FINUFFT}.
 
 FINUFFT is divided into three parts: finufft1d1, finufft1d2 and finufft1d3. They are
 used to solve signals which are non-uniform in time domain, frequency domain and
@@ -363,7 +493,7 @@ P1(2:end-1) = 2*P1(2:end-1);
 
 Do you think such a question: Nature doesn't have many complex signals, most of the signals
 are real. So why we use FT and create a complex basis function $e^{-j\omega t}$? Why not
-just use cosine? Well this is what \textbf{Discrete Cosine Transform (DCT)} do.
+just use cosine? Well this is what \emph{Discrete Cosine Transform (DCT)} do.
 
 \subsection{Definition}
 
@@ -415,7 +545,7 @@ However, now the DCT matrix is not orthogonal, so we need to normalize it:
   \end{cases}
 \end{align}
 
-This is the DCT, which is also called \textbf{DCT-II}, and IDCT is called \textbf{DCT-III}.
+This is the DCT, which is also called \emph{DCT-II}, and IDCT is called \emph{DCT-III}.
 \begin{align}
   x(n) &= \beta(k)\sum_{k=0}^{N-1} X(k)\cos\!\Bigl(\frac{(2m+1)n\pi}{2N}\Bigr)
   \quad(m = 0,1,\dots,N-1)\\
@@ -425,13 +555,13 @@ This is the DCT, which is also called \textbf{DCT-II}, and IDCT is called \textb
   \end{cases}
 \end{align}
 
-More than that, like FFT, DCT also has a fast algorithm called \textbf{Fast DCT (FDCT)}
+More than that, like FFT, DCT also has a fast algorithm called \emph{Fast DCT (FDCT)}
 with a time complexity of $O(NlogN)$. Its core is to break the DCT basis matrix into many
 smaller matrices to reduce the calculation complexity.
 
 \subsection{Application}
 
-DCT is widely used in image and audio compression, such as \textbf{JPEG} and \textbf{MP3}.
+DCT is widely used in image and audio compression, such as \emph{JPEG} and \emph{MP3}.
 It is especially effective for signals with a lot of low-frequency components, as it can
 represent these components with fewer coefficients.
 
@@ -459,7 +589,7 @@ It's also simple to solve this problem. Just divide the signal into two parts, t
 second and the next second, do FT on both parts, and then we can get the time information.
 
 This is called split by window in STFT. So there is a new concept called
-\textbf{window function}.
+\emph{window function}.
 
 \subsection{Definition}
 
@@ -530,7 +660,7 @@ the window width of STFT is fixed, which means that its resolution is also fixed
 not good for us, because we want to get a varaible resolution. So we need a new window
 function.
 
-This is the \textbf{wavelet mother function}, shown in \figref{fig:cwt-mother-function}.
+This is the \emph{wavelet mother function}, shown in \figref{fig:cwt-mother-function}.
 
 \begin{figure}[htbp]
   \centering
@@ -559,7 +689,7 @@ can be invertible.
 The wavelet mother function has no fixed frequency but a range. Therefore, Wavelet Transform
 is more like a Band Pass Filter (BPF).
 
-Here's the \textbf{wavelet funtion}:
+Here's the \emph{wavelet funtion}:
 \[
   \psi^*(\tau,s) = \frac{1}{\sqrt{s}}\psi(\frac{t}{s}-\tau)
 \]
@@ -616,20 +746,20 @@ This is according to computer's discreteness and finiteness.
 
 \subsection{Definition}
 
-Mallat created a new algorithm to process DWT, which is called \textbf{Mallat Algorithm}.
+Mallat created a new algorithm to process DWT, which is called \emph{Mallat Algorithm}.
 The core of Mallat Algorithm is to use a pair of low-pass filter and high-pass filter
 to decompose the signal into two parts: low frequency part and high frequency part.
 
 Let the original signal pass through a LPF $h[n]$ and a HPF $g[n]$, if the highest
 frequency of the signal is $\pi$, then the highest part(high frequency coefficient) is
 ($\pi/2, \pi$) and the lowest part is ($0, \pi/2$)(low frequency coefficient). This
-process is called \textbf{half sub-band filtering}.
+process is called \emph{half sub-band filtering}.
 
 The process of diluting the sampling points by a factor of N is called N-fold
-\textbf{subsampling}, on the other hand, the process of increasing the sampling points
-by a factor of N is called N-fold \textbf{upsampling} (also called interpolation).
+\emph{subsampling}, on the other hand, the process of increasing the sampling points
+by a factor of N is called N-fold \emph{upsampling} (also called interpolation).
 
-Both half sub-band filtering and 2-fold subsampling is called \textbf{wavelet decomposition}.
+Both half sub-band filtering and 2-fold subsampling is called \emph{wavelet decomposition}.
 
 After first decomposition, now keep the high frequency coefficient and decompose the
 low frequency coefficient twice, three times, and so on. Until it can't be
@@ -805,14 +935,14 @@ After a complex process (It wasn't given in paper actually :<), we can get the c
 \subsection{Fast Discrete Curvelet Transform}
 
 Candès and others created a fast algorithm to compute the discrete curvelet transform,
-which is called \textbf{Fast Discrete Curvelet Transform (FDCT)}.
+which is called \emph{Fast Discrete Curvelet Transform (FDCT)}.
 
-There are 2 implementations of FDCT: \textbf{FDCT via Unequispaced FFT (FDCT-USFFT)} and
-\textbf{FDCT via Wrapping (FDCT-Wrapping)}. The latter is more accurate and faster, so it's
+There are 2 implementations of FDCT: \emph{FDCT via Unequispaced FFT (FDCT-USFFT)} and
+\emph{FDCT via Wrapping (FDCT-Wrapping)}. The latter is more accurate and faster, so it's
 widely used in practice.
 
 It is very hard to understand without math background, so do I. But don't worry, authors
-have provided the code in Matlab and C called \textbf{CurveLab}. You can download it
+have provided the code in Matlab and C called \emph{CurveLab}. You can download it
 from \url{http://www.curvelet.org/}.
 
 And there's also a README file in the code package, which is very helpful. Here I just
@@ -861,10 +991,10 @@ Think a simple question: how to tell your friend in crowd? We just need to remem
 features of him, such as his face, height, clothes and so on. In fact the most common way
 is to remember his face, because it's the most distinctive feature. There are so many
 features on one's face, but we only need to remember a few of them. This is called
-\textbf{sparsity}. Sparsity is a concept that describes the situation where only a few
+\emph{sparsity}. Sparsity is a concept that describes the situation where only a few
 elements in a vector are non-zero or significant, while the rest are zero or almost zero.
 
-Except this, we also need to understand \textbf{overcompleteness}. Overcompleteness is a
+Except this, we also need to understand \emph{overcompleteness}. Overcompleteness is a
 concept that describes the situation where the number of features is greater than the
 number of samples. In other words, overcompleteness means that using $m (m>>n)$ signals
 to desribe a length $n$ signal. Overcomplete dictionary is quite normal in Machine Learning.
@@ -910,7 +1040,7 @@ The $l_p$-norm of a vector $x$ is:
   ||x||_p = \sqrt[p]{\sum_{i=1}^{n} |x_i|^p}.
 \]
 
-The most common norms are: \textbf{$l_0$-norm, $l_1$-norm and $l_2$-norm}.
+The most common norms are: \emph{$l_0$-norm, $l_1$-norm and $l_2$-norm}.
 
 $l_0$-norm is defined as the number of non-zero elements in the vector because the zero-time
 root is not defined.
@@ -923,14 +1053,14 @@ way, which is to minimize the $l_1$-norm. The $l_1$-norm is defined as:
 \]
 
 $l_1$-norm is the sum of the absolute values of the elements in the vector. This kind
-questions can be solved by \textbf{convex optimization}.
+questions can be solved by \emph{convex optimization}.
 
 $l_2$-norm is defined as:
 \[
   ||x||_2 = \sqrt{\sum_{i=1}^{n} |x_i|^2}.
 \]
 
-$l_2$-norm is also called \textbf{Euclidean norm}, which is the length of the vector.
+$l_2$-norm is also called \emph{Euclidean norm}, which is the length of the vector.
 It's widely used in the least squares method.
 
 There is also a $l_{\infty}$-norm, which is defined as:
@@ -944,7 +1074,7 @@ used in image processing.
 \subsection{Overfitting and $l_1$-norm sparsity}
 
 In machine learning, if the train set is too small, the model may fit the noise
-in the train set, which is called \textbf{overfitting}. This means that the model
+in the train set, which is called \emph{overfitting}. This means that the model
 performs well on the train set but poorly on the test set. To avoid overfitting,
 There is a way to add a $l_1$-norm regularization term to the loss function. Minimize
 the $l_1$-norm and we can get a sparse solution, and avoid overfitting.
@@ -975,7 +1105,7 @@ understand what is look like$^{[3]}$ of $l_p$-norm in 2D space.
 \end{figure}
 
 Take $l_1$-norm as an example, its intersection points with the coordinate axis are sparse
-because there are zeros. We call these points as \textbf{sparse points}. Imagine that there
+because there are zeros. We call these points as \emph{sparse points}. Imagine that there
 is a funtion, there are countless points on the function, once intersecting with the sparse
 points of $l_1$-norm, $l_1$-norm determines the sparse solution on the function. So that's
 why $l_1$-norm proves sparsity.
@@ -986,7 +1116,7 @@ why $l_1$-norm proves sparsity.
 
 For arbitrary $x, y$ and $\mu \in [0, 1]$, then $\mu x + (1-\mu)y$ means all points
 on the line segment between $x$ and $y$. If $x, y$ are in a set $C$ and $\mu x + (1-\mu)y$
-is also in $C$, then $C$ is called a \textbf{convex set}. \figref{fig:convex-not-convex-set}
+is also in $C$, then $C$ is called a \emph{convex set}. \figref{fig:convex-not-convex-set}
 is a set that fails this test.
 
 \begin{figure}[htbp]
@@ -996,12 +1126,12 @@ is a set that fails this test.
   \label{fig:convex-not-convex-set}
 \end{figure}
 
-A function $f$ is called \textbf{convex function} if its domain is a convex set and for any
+A function $f$ is called \emph{convex function} if its domain is a convex set and for any
 $x_1, x_2$ in the domain, the following inequality holds $f(\mu x_1 + (1-\mu)x_2) \leq \mu
  f(x_1) + (1-\mu)f(x_2)$, as \figref{fig:convex-function} illustrates.
 
 
-If the inequality is strict, then $f$ is called a \textbf{strictly convex function}.
+If the inequality is strict, then $f$ is called a \emph{strictly convex function}.
 
 \begin{figure}[htbp]
   \centering
@@ -1016,7 +1146,7 @@ If we have such an optimization problem
   \quad\text{s.t.}\quad
   g_i(x)\le 0,\;i=1,2,\dots,l,
 \]
-and$f(x), g_i(x)$ are all convex functions, then this is called a \textbf{convex
+and$f(x), g_i(x)$ are all convex functions, then this is called a \emph{convex
 optimization problem}.
 
 \subsection{What's the usage?}
@@ -1057,21 +1187,21 @@ to find the best solution:
   x = (A^TA)^{-1}A^Tb.
 \]
 
-And this introduces \textbf{projection matrix}.
+And this introduces \emph{projection matrix}.
 
 \subsection{Definition}
 
 Actually, solve x is a process that use the linear combination of the column vectors of $A$
 to approximate $b$. We set a vector $p$ which is the most close to $b$ and is in the
 column space of $A$. Then the question becomes $\min ||b-p||_2$. and $p$ is called the
-\textbf{orthogonal projection} of $b$ onto the column space of $A$.
+\emph{orthogonal projection} of $b$ onto the column space of $A$.
 
 We set $\hat{x}$ is the solution of the least squares method, then we have:
 \[
   p = A\hat{x} = A(A^TA)^{-1}A^Tb = Pb.
 \]
 
-The matrix $P = A(A^TA)^{-1}A^T$ is called the \textbf{projection matrix}.
+The matrix $P = A(A^TA)^{-1}A^T$ is called the \emph{projection matrix}.
 
 \subsection{Properties}
 
@@ -1091,13 +1221,13 @@ When I was writing this section, I realized that I had forgotten most of the kno
 Linear Algebra. I had to quick review it before I wrote almost everything. Study is a
 process of forgetting and remembering. So I suggest you to review the knowledge
 regularly, not only the required courses but also things like this tutorial. Well, after this
-subsection, we will go into the most important part, \textbf{Compressed Sensing}. Hope you
+subsection, we will go into the most important part, \emph{Compressed Sensing}. Hope you
 can understand it well.
 
 \section{Image Quality Assessment (IQA)}
 \subsection{MSE and PSNR}
 
-\textbf{Mean Squared Error (MSE)} is a basic metric for evaluating image quality. It
+\emph{Mean Squared Error (MSE)} is a basic metric for evaluating image quality. It
 measures the average squared difference between the original image and the distorted
 image. The formula is:
 \[
@@ -1112,7 +1242,7 @@ human visual perception. For example, a tiny loss in high-frequency details may 
 high MSE, but it may not be noticeable to human eyes.
 
 
-\textbf{Peak Signal-to-Noise Ratio (PSNR)} is the most common metric for evaluating image
+\emph{Peak Signal-to-Noise Ratio (PSNR)} is the most common metric for evaluating image
 quality. It is derived from MSE and represents the ratio between the maximum possible
 signal power and the noise power. The formula is:
 \[
@@ -1188,8 +1318,8 @@ To denoise a signal, we can use wavelet transform to transform the signal to wav
 domain, then use a threshold to shrink the wavelet coefficients, and finally use inverse
 wavelet transform to reconstruct the denoised signal.
 
-There are many ways to choose the threshold, there are 2 common thresholds: \textbf{hard
-threshold} and \textbf{soft threshold}.
+There are many ways to choose the threshold, there are 2 common thresholds: \emph{hard
+threshold} and \emph{soft threshold}.
 
 Hard threshold means that if the absolute value of the wavelet coefficient is less than the
 threshold, then set it to zero. Otherwise, keep it unchanged. The formula is:
@@ -1218,7 +1348,7 @@ is often used, which is defined as:
 where $\sigma$ is the noise level and $n$ is the number of wavelet coefficients.
 
 However, this threshold is not adaptive to the signal, and may lead to problems. So that's
-why \textbf{BayesShrink} comes out.
+why \emph{BayesShrink} comes out.
 
 \subsection{BayesShrink}
 
@@ -1340,12 +1470,12 @@ Under normal circumstances, we should choose specific basis $\Psi$, listed in
 
 \subsection{Observation Matrix Design}
 
-The core property of the observation matrix $\Phi$ is \textbf{Restrict Isometry (RIP)}.
+The core property of the observation matrix $\Phi$ is \emph{Restrict Isometry (RIP)}.
 RIP means that $\Phi$ can preserve the distance between the sparse signal and its
 observation. In other words, $\Phi$ can ensure that the sparse signal can be reconstructed
 from its observation. However, the RIP is very hard to satisfy, and there's an equivalent
-conditions$^{[4]}$ for RIP: \textbf{Incorrectness between the observation matrix $\Phi$ and
-the basis $\Psi$}. For most cases, \textbf{random Gaussian matrix} can satisfy this
+conditions$^{[4]}$ for RIP: \emph{Incorrectness between the observation matrix $\Phi$ and
+the basis $\Psi$}. For most cases, \emph{random Gaussian matrix} can satisfy this
 condition. There are also some other matrices, we will show them soon.
 
 Here's \figref{fig:cs-framework} to show Compressed Sensing$^{[5]}$, the observation matrix $\Phi$ is a
@@ -1363,14 +1493,14 @@ random Gaussian matrix, the basis $\Psi$ is a DCT basis.
 
 We have talked that Compressed Sensing can be transformed to a $l_1$-norm minimization
 problem, and this is a convex optimization problem ($l_1$-norm is convex and the equation
-is also convex). There are three kinds of methods to solve this problem: \textbf{Convex Relaxation
-Method}, \textbf{Greedy Pursuit Method} and \textbf{Iterative Thresholding Method}.
+is also convex). There are three kinds of methods to solve this problem: \emph{Convex Relaxation
+Method}, \emph{Greedy Pursuit Method} and \emph{Iterative Thresholding Method}.
 
-The typical representative of convex relaxation method is \textbf{Basic Pursuit (BP)},
-\textbf{Basic Pursuit Denoising (BPDN)}, while greedy pursuit method is \textbf{Orthogonal
-Matching Pursuit (OMP)} and \textbf{Compressive Sampling Matching Pursuit (CoSaMP)}. 
-Iterative thresholding method is \textbf{Iterative Hard Thresholding (IHT)} and
-\textbf{Iterative Soft Thresholding (IST)}. Every Algorithm has its own advantages and
+The typical representative of convex relaxation method is \emph{Basic Pursuit (BP)},
+\emph{Basic Pursuit Denoising (BPDN)}, while greedy pursuit method is \emph{Orthogonal
+Matching Pursuit (OMP)} and \emph{Compressive Sampling Matching Pursuit (CoSaMP)}. 
+Iterative thresholding method is \emph{Iterative Hard Thresholding (IHT)} and
+\emph{Iterative Soft Thresholding (IST)}. Every Algorithm has its own advantages and
 disadvantages, and the choice of algorithm depends on the specific application scenario.
 We will discuss greedy pursuit method in this tutorial.
 
@@ -1483,10 +1613,10 @@ and the matrix $A$ may not be invertible. So we need a new way to solve this pro
 This is the original idea of Matching Pursuit (MP).
 
 However, MP has many problems, to solve these problems, a very important algorithm
-called \textbf{Orthogonal Matching Pursuit (OMP)} was proposed. OMP is a typical greedy
+called \emph{Orthogonal Matching Pursuit (OMP)} was proposed. OMP is a typical greedy
 pursuit algorithm, In this section, we will introduce OMP and its variants.
 
-\subsubsection[\textbf{Examples}]{\textbf{Examples}\textsuperscript{[6]}}
+\subsubsection{Examples\textsuperscript{[6]}}
 
 \subsubsection{Example 1}
 \[
@@ -1495,7 +1625,7 @@ pursuit algorithm, In this section, we will introduce OMP and its variants.
 \]
 
 $A$ can be represented as a set of column vectors, and these vectors are called
-\textbf{atoms}. The goal of OMP is to find a linear combination of these atoms to
+\emph{atoms}. The goal of OMP is to find a linear combination of these atoms to
 reconstruct $y$. So we need to find which atom contributes to $y$ most, and which
 second, and so on. This process iterates N times, where N is the number of atoms.
 In this example, N = 3.
@@ -1517,7 +1647,7 @@ Contribution $\omega_i$ is $|<b_i, y>|$ or $|b_i^Ty|$. In this example, we have:
 So we choose $b_1$ as the first atom, write it into a new matrix $A_{new}$, then
 calculate residual $r = y - b_1\omega_1 = \begin{bmatrix} 0.7 \\ 0.7 \end{bmatrix}$.
 Also, create a contribution matrix $x_{rec} = \begin{bmatrix} -1.34 \\ 0 \\ 0
-\end{bmatrix}$ to record the contribution of $A_{new}$ to $y$ \textbf{(Not $\omega$!)}.
+\end{bmatrix}$ to record the contribution of $A_{new}$ to $y$ \emph{(Not $\omega$!)}.
 
 Actually, every time we calculate $x_{rec}$, least squares method is needed.
 Because $b_i$ is normalized ($l_1$-norm is 1) in this example, we can use $w_i$ for
@@ -1599,7 +1729,7 @@ The steps of OMP are:
   used or the residual is small enough.
 \end{enumerate}
 
-In the fact, OMP's calculation step is to normalize each atom by \textbf{Gram-Schmidt
+In the fact, OMP's calculation step is to normalize each atom by \emph{Gram-Schmidt
 Orthogonalization}, then subtract the orthogonalized components from the signal to be
 decomposed to obtain the residual. More about Gram-Schmidt Orthogonalization
 can be found in Prof.Strang's Linear Algebra course.
@@ -2148,7 +2278,7 @@ Now set ALM for this problem:
 \]
 
 If we optimize $x$ and $z$ together, it may be quite hard as the origin problem.
-So ADMM optimizes $x$ and $z$ alternately, called \textbf{Gauss-Seidel} method:
+So ADMM optimizes $x$ and $z$ alternately, called \emph{Gauss-Seidel} method:
 \begin{enumerate}
   \item Initialize $x^0, z^0, y^0$.
   \item Update $x$ by:
@@ -2220,18 +2350,18 @@ So let's end here. Class is over, dismiss!
 \addcontentsline{toc}{chapter}{References}
 \begin{enumerate}[label={[\arabic*]}, leftmargin=0pt]
   \raggedright
-  \item POLIKAR R. The Wavelet Tutorial [EB/OL]. Rowan University, (2006) [2025-07-19].
+  \item POLIKAR R. The Wavelet Tutorial [EB/OL]. Rowan University, (2006).
   \url{https://users.rowan.edu/~polikar/WTtutorial.html}.
   \item Bala Priya C. L1 Norm Regularization and Sparsity Explained for Dummies[EB/OL].
-  ML Review, 2016-08-27 [2025-07-20]. \url{https://blog.mlreview.com/l1-norm-
+  ML Review, 2016-08-27. \url{https://blog.mlreview.com/l1-norm-
   regularization-and-sparsity-explained-for-dummies-5b0e4be3938a}.
-  \item 半度墨水. 什么是范数[EB/OL]. 博客园, 2023-05-26 [2025-07-20] \url{https://www.cnblogs.
+  \item 半度墨水. 什么是范数[EB/OL]. 博客园, 2023-05-26. \url{https://www.cnblogs.
   com/HOI-Yzy/p/17435192.html}.
   \item R Baraniuk. A lecture on compressive sensing[J]. IEEE Signal Processing Magazine,
   2007, 24(4): 118-121.
   \item 石光明,刘丹华,高大化,等.压缩感知理论及其研究进展[J].电子学报,2009,37(05):1070-1081.
   \item Koredianto Usman. Introduction to Orthogonal Matching Pursuit[EB/OL].
-  2017-08-30 [2025-07-20] \url{https://korediantousman.staff.telkomuniversity.ac.id/
+  2017-08-30. \url{https://korediantousman.staff.telkomuniversity.ac.id/
   files/2017/08/main-1.pdf}
   \item 郑静静,印兴耀,张广智.基于Curvelet变换的多尺度分析技术[J].石油地球物理勘探,2009,
   44(05):543-547+521-522+650.
